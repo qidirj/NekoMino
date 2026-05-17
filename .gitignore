@@ -1,0 +1,11 @@
+_deps/*
+.cache/*
+.not_nekomino/*
+.vscode/*
+bin/*
+build/*
+CMakeFiles/*
+.makefile.old
+CMakeCache.txt
+*.log
+*.exe

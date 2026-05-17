@@ -1,0 +1,48 @@
+comment require file srs.txt
+
+config col_row
+
+kick_table SRS_JLSTZ
+kick 0,R -1,0 -1,+1 0,-2 -1,-2
+kick 1,L +1,0 +1,-1 0,+2 +1,+2
+kick 1,R +1,0 +1,-1 0,+2 +1,+2
+kick 2,L -1,0 -1,+1 0,-2 -1,-2
+kick 2,R +1,0 +1,+1 0,-2 +1,-2
+kick 3,L -1,0 -1,-1 0,+2 -1,+2
+kick 3,R -1,0 -1,-1 0,+2 -1,+2
+kick 0,L +1,0 +1,+1 0,-2 +1,-2
+
+kick_table SRS_I
+kick 0,R -2,0 +1,0 -2,-1 +1,+2
+kick 1,L +2,0 -1,0 +2,+1 -1,-2
+kick 1,R -1,0 +2,0 -1,+2 +2,-1
+kick 2,L +1,0 -2,0 +1,-2 -2,+1
+kick 2,R +2,0 -1,0 +2,+1 -1,-2
+kick 3,L -2,0 +1,0 -2,-1 +1,+2
+kick 3,R +1,0 -2,0 +1,-2 -2,+1
+kick 0,L -1,0 +2,0 -1,+2 +2,-1
+
+kick_table SRS_Zero
+kick 0,R 0,0
+kick 1,L 0,0
+kick 1,R 0,0
+kick 2,L 0,0
+kick 2,R 0,0
+kick 3,L 0,0
+kick 3,R 0,0
+kick 0,L 0,0
+kick 0,2 0,0
+kick 1,2 0,0
+kick 2,2 0,0
+kick 3,2 0,0
+
+rotation_system SRS
+mino I spawn 0 center 3,3 SRS_Zero SRS_I
+mino J spawn 0 center 2,2 SRS_Zero SRS_JLSTZ
+mino L spawn 0 center 2,2 SRS_Zero SRS_JLSTZ
+mino Z spawn 0 center 2,2 SRS_Zero SRS_JLSTZ
+mino S spawn 0 center 2,2 SRS_Zero SRS_JLSTZ
+mino T spawn 0 center 2,2 SRS_Zero SRS_JLSTZ
+mino O spawn 0 center 1,1 SRS_Zero
+
+end

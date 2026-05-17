@@ -1,0 +1,56 @@
+[
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\main.cpp.obj -c G:\\Projects\\NekoMino\\src\\main.cpp",
+  "file": "G:/Projects/NekoMino/src/main.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/main.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\error_handling.cpp.obj -c G:\\Projects\\NekoMino\\src\\error_handling.cpp",
+  "file": "G:/Projects/NekoMino/src/error_handling.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/error_handling.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\graphics.cpp.obj -c G:\\Projects\\NekoMino\\src\\graphics.cpp",
+  "file": "G:/Projects/NekoMino/src/graphics.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/graphics.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\localization.cpp.obj -c G:\\Projects\\NekoMino\\src\\localization.cpp",
+  "file": "G:/Projects/NekoMino/src/localization.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/localization.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\tetris_core\\core.cpp.obj -c G:\\Projects\\NekoMino\\src\\tetris_core\\core.cpp",
+  "file": "G:/Projects/NekoMino/src/tetris_core/core.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/tetris_core/core.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\tetris_core\\minoes.cpp.obj -c G:\\Projects\\NekoMino\\src\\tetris_core\\minoes.cpp",
+  "file": "G:/Projects/NekoMino/src/tetris_core/minoes.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/tetris_core/minoes.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\tetris_core\\rs.cpp.obj -c G:\\Projects\\NekoMino\\src\\tetris_core\\rs.cpp",
+  "file": "G:/Projects/NekoMino/src/tetris_core/rs.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/tetris_core/rs.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\tetris_core\\board.cpp.obj -c G:\\Projects\\NekoMino\\src\\tetris_core\\board.cpp",
+  "file": "G:/Projects/NekoMino/src/tetris_core/board.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/tetris_core/board.cpp.obj"
+},
+{
+  "directory": "G:/Projects/NekoMino",
+  "command": "G:\\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2\\mingw64\\bin\\c++.exe -DDEBUG  -g -std=c++17 -g -o CMakeFiles\\nekomino.dir\\src\\ui_core\\interface.cpp.obj -c G:\\Projects\\NekoMino\\src\\ui_core\\interface.cpp",
+  "file": "G:/Projects/NekoMino/src/ui_core/interface.cpp",
+  "output": "CMakeFiles/nekomino.dir/src/ui_core/interface.cpp.obj"
+}
+]
