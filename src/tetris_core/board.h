@@ -63,7 +63,7 @@ enum ZoneType {
 // accepts operation, emit line clear event, does not handle anything else
 // template<>
 #define on_line_clear_argument int line, mino &used_mino, SpinType spin, PCType pc, int zone// may change
-class game_base {
+class game_handler {
 private:
   int move(int dx, int dy);
   int rotate(int delta);

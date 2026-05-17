@@ -11,5 +11,8 @@
 #define GAME_VER_MAJOR 0
 #define GAME_VER_MINOR 0
 #define GAME_VER_PATCH 26051701
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+#define GAME_VER_STRING "v" STR(GAME_VER_MAJOR) "." STR(GAME_VER_MINOR) "." STR(GAME_VER_PATCH)
 
 #endif

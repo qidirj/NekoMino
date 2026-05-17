@@ -56,18 +56,18 @@ board::board(int w, int h) : width(w), height(h) {
   }
 }
 
-void game_base::generate(int n) {
+void game_handler::generate(int n) {
   auto new_minoes = generator(n);
   for (auto &m : new_minoes) {
     if (m.d == -1) m.d = rs::rotsys->rs[m.type].spawn_direction;
     next_queue.push_back(m);
   }
 }
-void game_base::initialize() {
+void game_handler::initialize() {
   current = mino();
   generate(next_limit);
 }
-void game_base::spawn() {
+void game_handler::spawn() {
   can_be_spin = true;
   is_mini_spin = false;
   last_kick_diff = 0;
@@ -81,7 +81,7 @@ void game_base::spawn() {
   current.y = ((b.width - ((span.second.second - span.second.first) / 2 + 1)) >> 1) * 2 - span.second.first;
 }
 
-bool game_base::collide() {
+bool game_handler::collide() {
   expand();
   for (size_t i = 0; i < current.shape.size(); i++) {
     for (size_t j = 0; j < current.shape[i].size(); j++) {
@@ -94,7 +94,7 @@ bool game_base::collide() {
   return false;
 }
 
-int game_base::move(int dx, int dy) {
+int game_handler::move(int dx, int dy) {
   LOG(1) << "move: " << dx << ' ' << dy << std::endl;
 #ifdef DEBUG
   assert((!!dx) ^ (!!dy)); // exactly one of dx and dy should be nonzero
@@ -117,7 +117,7 @@ int game_base::move(int dx, int dy) {
   LOG(1) << "moved " << n << std::endl;
   return n;
 }
-int game_base::rotate(int delta) {
+int game_handler::rotate(int delta) {
   int prev_d = current.d;
   current.rotate((delta + 4) % 4);
   int id = delta == -1 ? 0 : delta, m = 0; // LR2
@@ -138,7 +138,7 @@ int game_base::rotate(int delta) {
   return -1;
 }
 
-void game_base::expand() {
+void game_handler::expand() {
   if (current.type == Minoes::m0) return;
   size_t bound = (current.x + (current.shape.size() * 2 - current.cx)) / 2;
   if (bound > 1024) {
@@ -151,7 +151,7 @@ void game_base::expand() {
     b.grid.push_back(std::vector<cell>(b.width, { 0, Minoes::m0, 0, 0 }));
   }
 }
-void game_base::test_clear_line() {
+void game_handler::test_clear_line() {
   int lowest = (current.x - current.span().first.second) / 2;
   bool can_be_hpc = true, can_be_cpc = true, can_be_pc = true;
   std::vector<std::vector<cell>> new_grid, cleared;
@@ -184,19 +184,19 @@ void game_base::test_clear_line() {
   PCType pc = can_be_pc ? pc_full : (can_be_hpc ? (can_be_cpc ? pc_color : pc_half) : pc_none);
   on_line_clear(line, current, spin, pc, zone);
 }
-void game_base::start_zone(ZoneType z) {
+void game_handler::start_zone(ZoneType z) {
   if (zone) end_zone();
   zone = z;
   zone_line = 0;
 }
-void game_base::end_zone() {
+void game_handler::end_zone() {
   if (zone) {
     zone |= zone_ended;
     test_clear_line();
     zone = zone_none; zone_line = 0;
   }
 }
-void game_base::fix() {
+void game_handler::fix() {
   if (current.type == Minoes::mT && can_be_spin) {
     bool is_real_T = current.cx == 2 && current.cy == 2 && current.shape.size() == 3 && current.shape[1][1].type != Minoes::m0 &&
                       ((current.shape[0][1].type == Minoes::m0) + (current.shape[2][1].type == Minoes::m0) + (current.shape[1][0].type == Minoes::m0) + (current.shape[1][2].type == Minoes::m0) == 1) && 
@@ -239,29 +239,29 @@ void game_base::fix() {
   test_clear_line();
   spawn(); // todo: let game handle every spawn (for potential ARE)
 }
-bool game_base::moveable(int dx, int dy) {
+bool game_handler::moveable(int dx, int dy) {
   current.x += dx * 2; current.y += dy * 2;
   bool res = !collide();
   current.x -= dx * 2; current.y -= dy * 2;
   LOG(1) << "moveable: " << dx << ' ' << dy << ' ' << res << std::endl;
   return res;
 }
-bool game_base::touched_ground() {
+bool game_handler::touched_ground() {
   return !moveable(-1, 0);
 }
 
-int game_base::move_left(int amt) { return move(0, -amt); }
-int game_base::move_right(int amt) { return move(0, amt); }
-int game_base::move_leftmost() { return move(0, -b.width); }
-int game_base::move_rightmost() { return move(0, b.width); }
-int game_base::soft_drop(int amt) { return move(-amt, 0); }
-int game_base::instant_drop() { return move(-(int)(current.x / 2 + current.shape.size() + 1), 0); }
-int game_base::hard_drop() {
+int game_handler::move_left(int amt) { return move(0, -amt); }
+int game_handler::move_right(int amt) { return move(0, amt); }
+int game_handler::move_leftmost() { return move(0, -b.width); }
+int game_handler::move_rightmost() { return move(0, b.width); }
+int game_handler::soft_drop(int amt) { return move(-amt, 0); }
+int game_handler::instant_drop() { return move(-(int)(current.x / 2 + current.shape.size() + 1), 0); }
+int game_handler::hard_drop() {
   int amt = instant_drop();
   fix();
   return amt;
 }
-int game_base::hold() {
+int game_handler::hold() {
   if (!hold_limit) return -1;
   current.rotate((4 - current.d) % 4);
   int amt = hold_queue.size();
@@ -280,11 +280,11 @@ int game_base::hold() {
   }
   return amt;
 }
-int game_base::rotate_cw() { return rotate(1); }
-int game_base::rotate_ccw() { return rotate(-1); }
-int game_base::rotate_180() { return rotate(2); }
+int game_handler::rotate_cw() { return rotate(1); }
+int game_handler::rotate_ccw() { return rotate(-1); }
+int game_handler::rotate_180() { return rotate(2); }
 
-void game_base::print(std::ostream &s) {
+void game_handler::print(std::ostream &s) {
   s << "Hold: ";
   for (auto i : hold_queue) s << get_mino_name(i.type) << ' ';
   s << '\n';
@@ -315,10 +315,10 @@ void game_base::print(std::ostream &s) {
   s.flush();
 }
 
-void game_base::recalculate_texture() {
+void game_handler::recalculate_texture() {
   // todo: add texture code
 }
 
 /*
- TODO: texture (mino & game_base, different types), end zone when top out (maybe go to game), spawn go to game
+ TODO: texture (mino & game_handler, different types), end zone when top out (maybe go to game), spawn go to game
  */

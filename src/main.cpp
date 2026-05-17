@@ -22,7 +22,7 @@ void _demo_1() {
     mino(0, mO, mO),
   };
   
-  game_base game;
+  game_handler game;
   game.b = board();
   int idn = 0;
   game.generator = [&rng, &bag, &idn](int n) {
