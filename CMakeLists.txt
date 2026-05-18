@@ -29,7 +29,7 @@ add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
 #     SYSTEM)
 # FetchContent_MakeAvailable(SFML)
 
-add_executable(nekomino src/main.cpp src/error_handling.cpp src/graphics.cpp src/localization.cpp src/tetris_core/core.cpp src/tetris_core/minoes.cpp src/tetris_core/rs.cpp
+add_executable(nekomino src/main.cpp src/error_handling.cpp src/localization.cpp src/tetris_core/core.cpp src/tetris_core/minoes.cpp src/tetris_core/rs.cpp
   src/tetris_core/board.cpp
   src/ui_core/interface.cpp)
 target_compile_features(nekomino PRIVATE cxx_std_17)

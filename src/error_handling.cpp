@@ -5,5 +5,6 @@ namespace logger {
   logger meta("nekomino.log", true),
         localization("localization.log"),
         rs_load("rs_load.log"),
-        tetris_core("tetris_core.log");
+        tetris_core("tetris_core.log"),
+        interface("ui_interface.log");
 }

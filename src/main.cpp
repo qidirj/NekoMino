@@ -1,15 +1,17 @@
+#include <SFML/System/Clock.hpp>
 #include <algorithm>
 #include <iostream>
 #include <random>
 
-#include <conio.h>
-#include <windows.h>
-
 #include "tetris_core/board.h"
+#include "tetris_core/core.h"
 #include "tetris_core/minoes.h"
 
 #include "ui_core/interface.h"
 
+#ifdef __WIN32__
+#include <conio.h>
+#include <windows.h>
 void _demo_1() {
   std::mt19937 rng(std::random_device{}());
   std::vector<mino> bag = {
@@ -74,6 +76,7 @@ void _demo_1() {
     game.print(std::cout);
   }
 }
+#endif
 
 int main() {
   ui::pre_initialize();
@@ -83,12 +86,25 @@ int main() {
   // rs::print(std::cout, rs::rotation_systems["SRS"], true);
   rotsys = &rs::rotation_systems["SRS"];
 
+  ui::initialize();
+
+  sf::Clock clock; clock.restart();
+  sf::Time render_cd, render_rate = sf::seconds(1.0 / 60.0);
+  game g;
   while (ui::window.isOpen()) {
+    auto dt = clock.restart();
     while (const std::optional event = ui::window.pollEvent()) {
-        // "close requested" event: we close the window
-        if (event->is<sf::Event::Closed>())
-          ui::window.close();
+      // "close requested" event: we close the window
+      if (event->is<sf::Event::Closed>())
+        ui::window.close();
     }
+    g.tick(dt);
+    if ((render_cd += dt) >= render_rate) {
+      ui::window.clear(sf::Color::Black);
+      ui::render_temp(g);
+      ui::window.display();
+    }
+    // std::clog << dt.asSeconds() << std::endl;
   }
   return 0;
 }

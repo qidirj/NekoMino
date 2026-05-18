@@ -30,7 +30,7 @@ namespace logger {
       void debug(const std::string &msg) { if ((last = (mask & 0b10000))) f << time(0) << " [DEBUG] " << msg << std::endl; }
       void note (const std::string &msg) { if ( last                    ) f <<  "           [NOTE] " << msg << std::endl; }
   };
-  extern logger meta, localization, rs_load, tetris_core;
+  extern logger meta, localization, rs_load, tetris_core, interface;
 }
 
 #endif

@@ -237,7 +237,8 @@ void game_handler::fix() {
     }
   }
   test_clear_line();
-  spawn(); // todo: let game handle every spawn (for potential ARE)
+  // spawn(); // done: let game handle every spawn (for potential ARE)
+  current = mino(); // reset mino; check if its a m0
 }
 bool game_handler::moveable(int dx, int dy) {
   current.x += dx * 2; current.y += dy * 2;
