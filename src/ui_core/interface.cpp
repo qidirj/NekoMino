@@ -21,7 +21,7 @@ void initialize() {
 }
 void render_temp(game &g) {
   std::ostringstream ss;
-  g.g.print(ss);
+  g.print(ss);
   sf::Text text(font, ss.str(), 12); text.setFillColor(sf::Color::White);
   text.setPosition({ 0, 0 });
   window.draw(text);

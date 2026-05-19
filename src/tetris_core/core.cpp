@@ -58,8 +58,8 @@ void game::get_key_down_stat() {
     // if (down) LOG(2) << i << " down" << std::endl;
   }
 }
-void game::press(operation id) {
-}
+// void game::press(operation id) {
+// }
 void game::change_dir(int nd) {
   if (nd == charge_move_dir) return;
   charge_move_dir = nd;
@@ -79,8 +79,14 @@ void game::tick(sf::Time dt) {
   hasnt_mino {
     charge_are -= dt;
     if (charge_are <= sf::Time::Zero) {
-      g.spawn(); held = false;
       LOG(3) << "Inside spawn" << std::endl;
+
+      g.spawn(); held = false;
+      
+      charge_gravity = sf::Time::Zero;
+      charge_lock = sf::Time::Zero;
+      lock_refresh = lock_refresh_max;
+      rot_amount = 0; began_lock = false;
 
       if ((ihs == ixs_hold && key_down[oHold]) || (ihs == ixs_tap && ihs_stash)) {
         g.hold(); held = true;
@@ -93,41 +99,43 @@ void game::tick(sf::Time dt) {
           if (key_down[o180]) ++kc, k = 2;
         } else kc = 1, k = irs_stash;
         if (kc == 1) {
-          if (k == 1) g.rotate_cw();
-          else if (k == -1) g.rotate_ccw();
-          else if (k == 2) g.rotate_180();
+          if (k == 1) rotate_cw();
+          else if (k == -1) rotate_ccw();
+          else if (k == 2) rotate_180();
         }
       }
       if (ims == ixs_hold) {
         if (key_pressed[oLMost] ^ key_pressed[oRMost]) {
-          if (key_pressed[oLMost]) { g.move_leftmost(); reset_opposite_das(-1); }
-          if (key_pressed[oRMost]) { g.move_rightmost(); reset_opposite_das(1); }
+          if (key_pressed[oLMost]) { move_leftmost(); reset_opposite_das(-1); }
+          if (key_pressed[oRMost]) { move_rightmost(); reset_opposite_das(1); }
         }
         if (key_pressed[oLeft] ^ key_pressed[oRight]) {
-          if (key_pressed[oLeft]) { g.move_left(); change_dir(-1); }
-          if (key_pressed[oRight]) { g.move_right(); change_dir(1); }
+          if (key_pressed[oLeft]) { move_left(); change_dir(-1); }
+          if (key_pressed[oRight]) { move_right(); change_dir(1); }
           charge_move = std::max(charge_move, arr);
         }
       }
       irs_stash = 0; ihs_stash = 0;
       
       charge_are = sf::Time::Zero;
+
       LOG(3) << "Outside spawn" << std::endl;
     }
   }
 
-  // todo: handle lock delay (just before hd)
   // gravity
-  {
-    charge_gravity += dt;
-    if (charge_gravity >= gravity) {
-      if (gravity > sf::Time::Zero) {
-        int move_amount = std::floor(charge_gravity / gravity);
-        g.soft_drop(move_amount);
-        charge_gravity -= gravity * (std::int64_t)move_amount;
-      } else if (gravity == sf::Time::Zero) {
-        g.instant_drop();
-        charge_gravity = sf::Time::Zero;
+  has_mino {
+    if (gravity >= sf::Time::Zero) {
+      charge_gravity += dt;
+      if (charge_gravity >= gravity) {
+        if (gravity > sf::Time::Zero) {
+          int move_amount = std::floor(charge_gravity / gravity);
+          g.soft_drop(move_amount);
+          charge_gravity -= gravity * (std::int64_t)move_amount;
+        } else if (gravity == sf::Time::Zero) {
+          g.instant_drop();
+          charge_gravity = sf::Time::Zero;
+        }
       }
     }
   }
@@ -155,12 +163,26 @@ void game::tick(sf::Time dt) {
   }
   LOG(3) << "1" << std::endl;
 
+  // lock delay
+  has_mino {
+    if (lock_delay >= sf::Time::Zero) {
+      if (g.touched_ground() || (lock_refresh == 0 && began_lock)) {
+        began_lock = true;
+        charge_lock += dt;
+        if (charge_lock >= lock_delay) {
+          g.hard_drop();
+          charge_are += are, charge_move_dcd = dcd;
+        }
+      } else charge_lock = sf::Time::Zero;
+    }
+  }
+
   // move
   {
-    if (key_pressed[oLeft]) { has_mino g.move_left(); change_dir(-1); }
-    if (key_pressed[oRight]) { has_mino g.move_right(); change_dir(1); }
-    if (key_pressed[oLMost]) { has_mino g.move_leftmost(); reset_opposite_das(-1); }
-    if (key_pressed[oRMost]) { has_mino g.move_rightmost(); reset_opposite_das(1); }
+    if (key_pressed[oLeft]) { has_mino move_left(); change_dir(-1); }
+    if (key_pressed[oRight]) { has_mino move_right(); change_dir(1); }
+    if (key_pressed[oLMost]) { has_mino move_leftmost(); reset_opposite_das(-1); }
+    if (key_pressed[oRMost]) { has_mino move_rightmost(); reset_opposite_das(1); }
     if (charge_move_dir == -1 && !key_down[oLeft]) {
       if (key_down[oRight]) change_dir(1);
       else change_dir(0);
@@ -177,12 +199,12 @@ void game::tick(sf::Time dt) {
         has_mino {
           if (arr != sf::Time::Zero) {
             int move_amount = std::floor(-charge_move / arr) + 1;
-            if (charge_move_dir == -1) g.move_left(move_amount);
-            else g.move_right(move_amount);
+            if (charge_move_dir == -1) move_left(move_amount);
+            else move_right(move_amount);
             charge_move += arr * (std::int64_t)move_amount;
           } else {
-            if (charge_move_dir == -1) g.move_leftmost();
-            else g.move_rightmost();
+            if (charge_move_dir == -1) move_leftmost();
+            else move_rightmost();
             charge_move = sf::Time::Zero;
           }
         } else charge_move = sf::Time::Zero;
@@ -193,14 +215,97 @@ void game::tick(sf::Time dt) {
 
   // rotate
   {
-    if (key_pressed[oCW]) { has_mino g.rotate_cw(); stash(irs) irs_stash = 1; charge_move_dcd = dcd; }
-    if (key_pressed[oCCW]) { has_mino g.rotate_ccw(); stash(irs) irs_stash = -1; charge_move_dcd = dcd; }
-    if (key_pressed[o180]) { has_mino g.rotate_180(); stash(irs) irs_stash = 2; charge_move_dcd = dcd; }
+    if (key_pressed[oCW]) { has_mino rotate_cw(); stash(irs) irs_stash = 1; charge_move_dcd = dcd; }
+    if (key_pressed[oCCW]) { has_mino rotate_ccw(); stash(irs) irs_stash = -1; charge_move_dcd = dcd; }
+    if (key_pressed[o180]) { has_mino rotate_180(); stash(irs) irs_stash = 2; charge_move_dcd = dcd; }
   }
 
   // hd, hold
   {
     if (key_pressed[oHD]) { has_mino g.hard_drop(); charge_are += are, charge_move_dcd = dcd; }
-    if (key_pressed[oHold]) { has_mino { if (!held || infinite_hold) g.hold(), held = true; } stash(ihs) ihs_stash = 1; }
+    if (key_pressed[oHold]) {
+      has_mino {
+        if (!held || infinite_hold) {
+          g.hold(), held = true;
+          charge_gravity = sf::Time::Zero;
+          charge_lock = sf::Time::Zero;
+          lock_refresh = std::min(lock_refresh_max, lock_refresh + lock_refresh_on_hold);
+          rot_amount = 0; began_lock = false;
+        }
+      } stash(ihs) ihs_stash = 1;
+    }
   }
 }
+
+int game::move_left(int amt) {
+  int m = 0; bool tg = g.touched_ground();
+  while (amt--) {
+    if (!g.move_left()) return m;
+    ++m;
+    if (lock_refresh > 0) charge_lock = sf::Time::Zero;
+    if (tg) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+    tg = g.touched_ground();
+  }
+  return m;
+}
+int game::move_right(int amt) {
+  int m = 0; bool tg = g.touched_ground();
+  while (amt--) {
+    if (!g.move_right()) return m;
+    ++m;
+    if (lock_refresh > 0) charge_lock = sf::Time::Zero;
+    if (tg) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+    tg = g.touched_ground();
+  }
+  return m;
+}
+int game::move_leftmost() {
+  int amt = g.b.width, m = 0; bool tg = g.touched_ground();
+  while (amt--) {
+    if (!g.move_left()) return m;
+    ++m;
+    if (lock_refresh > 0) charge_lock = sf::Time::Zero;
+    if (tg) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+    tg = g.touched_ground();
+  }
+  return m;
+}
+int game::move_rightmost() {
+  int amt = g.b.width, m = 0; bool tg = g.touched_ground();
+  while (amt--) {
+    if (!g.move_right()) return m;
+    ++m;
+    if (lock_refresh > 0) charge_lock = sf::Time::Zero;
+    if (tg) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+    tg = g.touched_ground();
+  }
+  return m;
+}
+int game::rotate_cw() {
+  bool tg = g.touched_ground();
+  int res = g.rotate_cw();
+  if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
+  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  return res;
+}
+int game::rotate_ccw() {
+  bool tg = g.touched_ground();
+  int res = g.rotate_ccw();
+  if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
+  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  return res;
+}
+int game::rotate_180() {
+  bool tg = g.touched_ground();
+  int res = g.rotate_180();
+  if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
+  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  return res;
+}
+
+void game::print(std::ostream &s) {
+  g.print(s);
+  auto ldr = 1 - (charge_lock / lock_delay); int n = std::round(10 * ldr);
+  s << std::string(n, '&') << std::string(10 - n, ' ') << '|' << lock_refresh;
+}
+

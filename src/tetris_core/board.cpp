@@ -321,5 +321,5 @@ void game_handler::recalculate_texture() {
 }
 
 /*
- TODO: texture (mino & game_handler, different types), end zone when top out (maybe go to game), spawn go to game
+ TODO: texture (mino & game_handler, different types), end zone when top out (maybe go to game)
  */
