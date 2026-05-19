@@ -95,7 +95,7 @@ bool game_handler::collide() {
 }
 
 int game_handler::move(int dx, int dy) {
-  LOG(1) << "move: " << dx << ' ' << dy << std::endl;
+  LOG(3) << "move: " << dx << ' ' << dy << std::endl;
 #ifdef DEBUG
   assert((!!dx) ^ (!!dy)); // exactly one of dx and dy should be nonzero
 #endif
@@ -256,7 +256,7 @@ int game_handler::move_right(int amt) { return move(0, amt); }
 int game_handler::move_leftmost() { return move(0, -b.width); }
 int game_handler::move_rightmost() { return move(0, b.width); }
 int game_handler::soft_drop(int amt) { return move(-amt, 0); }
-int game_handler::instant_drop() { return move(-(int)(current.x / 2 + current.shape.size() + 1), 0); }
+int game_handler::instant_drop() { return move(-std::max(1, (int)(current.x / 2 + current.shape.size() + 1)), 0); }
 int game_handler::hard_drop() {
   int amt = instant_drop();
   fix();

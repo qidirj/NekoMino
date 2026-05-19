@@ -29,12 +29,12 @@ class game {
 
 public:
   game_handler g;
-  sf::Time das = sf::milliseconds(70), arr = sf::milliseconds(0), dcd = sf::milliseconds(0);
-  sf::Time are = sf::milliseconds(0), are_on_clear = sf::milliseconds(0), are_per_line = sf::milliseconds(0);
+  sf::Time das = sf::milliseconds(83), arr = sf::milliseconds(8), dcd = sf::milliseconds(0);
+  sf::Time are = sf::milliseconds(100), are_on_clear = sf::milliseconds(333), are_per_line = sf::milliseconds(0);
   sf::Time sddas = sf::milliseconds(0), sdarr = sf::milliseconds(0);
   sf::Time gravity = sf::milliseconds(0);
   std::vector<sf::Keyboard::Key> keybinding[num_operations];
-  IXSMode irs = ixs_none, ihs = ixs_none, ims = ixs_hold; // * ims cannot be tap
+  IXSMode irs = ixs_hold, ihs = ixs_hold, ims = ixs_hold; // * ims cannot be tap
   bool infinite_hold = false;
 
   game();

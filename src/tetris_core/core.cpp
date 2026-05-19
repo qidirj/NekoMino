@@ -1,3 +1,4 @@
+#include "../constants.h"
 #include "core.h"
 #include <cmath>
 #include <cstdint>
@@ -54,7 +55,7 @@ void game::get_key_down_stat() {
     if (down && !key_down[i]) key_pressed[i] = true;
     else key_pressed[i] = false;
     key_down[i] = down;
-    // if (down) std::clog << i << " down" << std::endl;
+    // if (down) LOG(2) << i << " down" << std::endl;
   }
 }
 void game::press(operation id) {
@@ -79,6 +80,7 @@ void game::tick(sf::Time dt) {
     charge_are -= dt;
     if (charge_are <= sf::Time::Zero) {
       g.spawn(); held = false;
+      LOG(3) << "Inside spawn" << std::endl;
 
       if ((ihs == ixs_hold && key_down[oHold]) || (ihs == ixs_tap && ihs_stash)) {
         g.hold(); held = true;
@@ -110,6 +112,7 @@ void game::tick(sf::Time dt) {
       irs_stash = 0; ihs_stash = 0;
       
       charge_are = sf::Time::Zero;
+      LOG(3) << "Outside spawn" << std::endl;
     }
   }
 
@@ -150,6 +153,7 @@ void game::tick(sf::Time dt) {
       }
     }
   }
+  LOG(3) << "1" << std::endl;
 
   // move
   {
@@ -185,6 +189,7 @@ void game::tick(sf::Time dt) {
       }
     }
   }
+  LOG(3) << "2" << std::endl;
 
   // rotate
   {
@@ -196,6 +201,6 @@ void game::tick(sf::Time dt) {
   // hd, hold
   {
     if (key_pressed[oHD]) { has_mino g.hard_drop(); charge_are += are, charge_move_dcd = dcd; }
-    if (key_pressed[oHold]) { has_mino { if (!held || infinite_hold) g.hold(); } stash(ihs) ihs_stash = 1; }
+    if (key_pressed[oHold]) { has_mino { if (!held || infinite_hold) g.hold(), held = true; } stash(ihs) ihs_stash = 1; }
   }
 }
