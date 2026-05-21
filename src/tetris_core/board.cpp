@@ -1,6 +1,6 @@
 #include "board.h"
 #include "../constants.h"
-#include "../error_handling.h"
+#include "../util/error_handling.h"
 #include <cassert>
 #include <iomanip>
 
@@ -146,7 +146,7 @@ void game_handler::expand() {
     bound = 1024;
   }
   if (bound < b.grid.size()) return;
-  logger::tetris_core.debug("Expanding board to " + std::to_string(bound));
+  logger::tetris_core.debugv(4, "Expanding board to " + std::to_string(bound));
   while (b.grid.size() <= bound) {
     b.grid.push_back(std::vector<cell>(b.width, { 0, Minoes::m0, 0, 0 }));
   }

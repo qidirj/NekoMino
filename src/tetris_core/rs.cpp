@@ -1,5 +1,6 @@
 #include "rs.h"
-#include "../error_handling.h"
+#include "../util/error_handling.h"
+#include "../util/util.h"
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -28,18 +29,6 @@ std::set<std::string> loaded_file;
 std::set<std::string> loading_file;
 
 rotation_system_t *rotsys;
-
-bool isnumber(const std::string &s) {
-  if (s.empty()) return false;
-  if (s[0] == '-' || s[0] == '+') {
-    if (s.size() == 1) return false;
-    return isnumber(s.substr(1));
-  }
-  for (char c : s) {
-    if (c < '0' || c > '9') return false;
-  }
-  return true;
-}
 
 void reset_rs_data() {
   kick_tables.clear();
@@ -138,7 +127,7 @@ bool load_from_file(const std::string &filename) {
       int id = _[0][0] - 48, rot = (_[1][0] == 'L' ? 0 : (_[1][0] == 'R' ? 1 : 2));
       for (size_t i = 2; i < tokens.size(); ++i) {
         _ = split(tokens[i], ',');
-        if (_.size() != 2 || !isnumber(_[0]) || !isnumber(_[1])) {
+        if (_.size() != 2 || !is_integer(_[0]) || !is_integer(_[1])) {
           logger::rs_load.warn("Invalid kick movement entry in file: " + filename);
           continue;
         }
@@ -152,7 +141,7 @@ bool load_from_file(const std::string &filename) {
         continue;
       }
       Minoes mino_id;
-      if (isnumber(tokens[1])) mino_id = Minoes(std::stoi(tokens[1]));
+      if (is_integer(tokens[1])) mino_id = Minoes(std::stoi(tokens[1]));
       else mino_id = get_mino_id(toupper(tokens[1]));
       if (mino_id == m0) {
         logger::rs_load.warn("Unknown mino name " + tokens[1] + " in file: " + filename);
@@ -164,7 +153,7 @@ bool load_from_file(const std::string &filename) {
       while (tokens.size() >= kt_begin + 2 && (tokens[kt_begin] == "center" || tokens[kt_begin] == "spawn")) {
         if (tokens[kt_begin] == "center") {
           auto _ = split(tokens[kt_begin + 1], ',');
-          if (_.size() != 2 || !isnumber(_[0]) || !isnumber(_[1])) {
+          if (_.size() != 2 || !is_integer(_[0]) || !is_integer(_[1])) {
             logger::rs_load.warn("Invalid center entry for " + tokens[1] + " in file: " + filename);
             continue;
           }
@@ -175,7 +164,7 @@ bool load_from_file(const std::string &filename) {
         }
         if (tokens[kt_begin] == "spawn") {
           auto _ = tokens[kt_begin + 1];
-          if (!isnumber(_)) {
+          if (!is_integer(_)) {
             logger::rs_load.warn("Invalid spawn entry for " + tokens[1] + " in file: " + filename);
             continue;
           }

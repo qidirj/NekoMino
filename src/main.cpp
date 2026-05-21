@@ -3,83 +3,23 @@
 #include <iostream>
 #include <random>
 
+#include "config/config.h"
 #include "tetris_core/board.h"
 #include "tetris_core/core.h"
 #include "tetris_core/minoes.h"
 
 #include "ui_core/interface.h"
 
-#ifdef __WIN32__
-#include <conio.h>
-#include <windows.h>
-void _demo_1() {
-  std::mt19937 rng(std::random_device{}());
-  std::vector<mino> bag = {
-    mino(0, mI, mI),
-    mino(0, mJ, mJ),
-    mino(0, mL, mL),
-    mino(0, mZ, mZ),
-    mino(0, mS, mS),
-    mino(0, mT, mT),
-    mino(0, mO, mO),
-  };
-  
-  game_handler game;
-  game.b = board();
-  int idn = 0;
-  game.generator = [&rng, &bag, &idn](int n) {
-    std::vector<mino> res;
-    for (int i = 1; i <= n; i += 7) {
-      std::shuffle(bag.begin(), bag.end(), rng);
-      for (int j = 0; j < 7; j++) {
-        bag[j].id = ++idn;
-        res.push_back(bag[j]);
-      }
-    }
-    return res;
-  };
-
-  game.on_line_clear = [](on_line_clear_argument) {
-    const std::string lines[] = { "VOID", "SINGLE", "DOUBLE", "TRIPLE", "QUAD" };
-    if (spin) {
-      if (spin == spin_mini) std::cout << "MINI ";
-      std::cout << get_mino_name(used_mino.type) << "-SPIN ";
-    }
-    std::cout << lines[line] << ' ';
-    if (pc) {
-      if (pc == pc_full) std::cout << "PERFECT CLEAR ";
-      else if (pc == pc_color) std::cout << "COLOR CLEAR ";
-      else std::cout << "HALF CLEAR ";
-    }
-    std::cout << '\n';
-  };
-
-  game.initialize();
-  // game.print(std::cout); system("pause");
-
-  game.spawn();
-  game.print(std::cout);
-
-  while (true) {
-    while (!_kbhit());
-    char ch = _getch();
-    // std::cout << ch << '\n';
-    if (ch == 'K') game.move_left();
-    else if (ch == 'M') game.move_right();
-    else if (ch == 'P') game.soft_drop();
-    else if (ch == ' ') game.hard_drop();
-    else if (ch == 'x') game.rotate_cw();
-    else if (ch == 'z') game.rotate_ccw();
-    else if (ch == 'a') game.rotate_180();
-    else if (ch == 'c') game.hold();
-    else continue;
-    game.print(std::cout);
-  }
-}
-#endif
-
-int main() {
+void initialize() {
   ui::pre_initialize();
+
+  int config_result = config::initialize();
+  if (config_result) {
+    if (config_result == 1) ui::pre_initialize_render_error(true, std::to_string(config::validator::errors) + " errors generated when validating Default Config.\nPlease contact Daiari with your 'logs/config.log'."), std::exit(1);
+    else if (config_result == 2) ui::pre_initialize_render_error(true, std::to_string(config::loader::errors) + " errors generated when loading Config.\nPlease verify your '" + config::config_path + "', 'logs/config.log' may help."), std::exit(2);
+    else if (config_result == 3) ui::pre_initialize_render_error(false, std::to_string(config::loader::warns) + " warning generated when loading Config.\nPlease verify your '" + config::config_path + "', 'logs/config.log' may help.") ? std::exit(3) : void();
+    else if (config_result == 4) ui::pre_initialize_render_error(false, std::to_string(config::user_validator::warns) + " warning generated when validating Config.\nPlease verify your '" + config::config_path + "', 'logs/config.log' may help.") ? std::exit(4) : void();
+  }
 
   rs::load_from_file("res/rotation_system/srs.txt");
   // rs::print(std::cout, rs::rotation_systems["SRS"], false);
@@ -87,6 +27,13 @@ int main() {
   rotsys = &rs::rotation_systems["SRS"];
 
   ui::initialize();
+}
+
+
+std::vector<float> dt_a, dt_b;
+
+int main() {
+  initialize();
 
   sf::Clock clock; clock.restart();
   sf::Time render_cd, render_rate = sf::seconds(1.0 / 60.0);
@@ -100,11 +47,30 @@ int main() {
     }
     g.tick(dt);
     if ((render_cd += dt) >= render_rate) {
+      render_cd -= render_rate;
       ui::window.clear(sf::Color::Black);
       ui::render_temp(g);
       ui::window.display();
-    }
-    // std::clog << dt.asSeconds() << std::endl;
+      dt_b.push_back(dt.asSeconds());
+      // std::clog << dt.asSeconds() << std::endl;
+    } else dt_a.push_back(dt.asSeconds());
+    if (dt_a.size() == 200000) break;
+    // if (dt_a.size() % 1000 == 0) std::clog << dt_a.size() << std::endl;
   }
+  ui::window.close();
+  
+  double sum = 0, avr, var;
+  for (auto i : dt_a) sum += i;
+  avr = sum / dt_a.size();
+  for (auto i : dt_a) var += (i - avr) * (i - avr);
+  var = std::sqrt(var / dt_a.size());
+  std::clog << "Logic  frame: " << dt_a.size() << ", time " << avr << "+-" << var << std::endl;
+
+  sum = 0;
+  for (auto i : dt_b) sum += i;
+  avr = sum / dt_b.size();
+  for (auto i : dt_b) var += (i - avr) * (i - avr);
+  var = std::sqrt(var / dt_b.size());
+  std::clog << "Render frame: " << dt_b.size() << ", time " << avr << "+-" << var << std::endl;
   return 0;
 }

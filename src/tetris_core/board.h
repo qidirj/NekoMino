@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include "rs.h"
+#include "../util/enumerator.h"
+#include "../constants.h"
 #include <cstdint>
 #include <iostream>
 #include <functional>
@@ -42,23 +44,6 @@ struct board {
   board(int w = 10, int h = 20);
 };
 
-enum SpinType {
-  spin_none,
-  spin_mini,
-  spin_full,
-};
-enum PCType {
-  pc_none,
-  pc_half, // half clear
-  pc_color, // half clear, no color cells left
-  pc_full, // all clear
-};
-enum ZoneType {
-  zone_none, // no zone
-  zone_stack, // do not clear the line
-  zone_sink, // when clear, sink the cleared line to the bottom
-  zone_ended = 8, // when end_zone is called
-};
 
 // accepts operation, emit line clear event, does not handle anything else
 // template<>

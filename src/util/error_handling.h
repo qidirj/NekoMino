@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include "../constants.h"
 namespace logger {
   class logger {
     std::ofstream f; bool workwell = true, last = false;
@@ -29,8 +30,10 @@ namespace logger {
       void info (const std::string &msg) { if ((last = (mask & 0b01000))) f << time(0) << " [INFO]  " << msg << std::endl; }
       void debug(const std::string &msg) { if ((last = (mask & 0b10000))) f << time(0) << " [DEBUG] " << msg << std::endl; }
       void note (const std::string &msg) { if ( last                    ) f <<  "           [NOTE] " << msg << std::endl; }
+
+      void debugv(int ver, const std::string &msg) { if (ver >= DEBUG_VER && (last = (mask & 0b10000))) f << time(0) << " [DEBUG] " << msg << std::endl; }
   };
-  extern logger meta, localization, rs_load, tetris_core, interface;
+  extern logger meta, localization, rs_load, tetris_core, interface, config;
 }
 
 #endif

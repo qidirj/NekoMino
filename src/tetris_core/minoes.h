@@ -1,6 +1,7 @@
 #ifndef MINOES_H
 #define MINOES_H
 
+// #include "../constants.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -12,6 +13,7 @@ enum Minoes {
   mO1 = 0x40, mI2, mI3, mC3, // 1+1+2 1~3-minoes
   // 6-minoes todo
 };
+
 Minoes get_mino_id(const std::string &name);
 std::string get_mino_name(Minoes id);
 

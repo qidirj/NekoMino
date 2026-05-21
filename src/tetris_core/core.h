@@ -2,17 +2,13 @@
 #define CORE_H
 
 #include "board.h"
+#include "../constants.h"
 #include <map>
 #include <vector>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-enum operation {
-  oLeft, oRight, oSD, oHD, oCW, oCCW, o180, oHold, oLMost, oRMost, oID, o__Last
-}; constexpr int num_operations = o__Last;
-enum IXSMode {
-  ixs_none, ixs_tap, ixs_hold
-};
+constexpr int num_operations = op__Last;
 class game {
   void change_dir(int nd);
   void reset_opposite_das(int nd);

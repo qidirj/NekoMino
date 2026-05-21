@@ -155,53 +155,29 @@ release/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/build
 .PHONY : release/fast
 
-src/error_handling.o: src/error_handling.cpp.o
-.PHONY : src/error_handling.o
+src/config/config.o: src/config/config.cpp.o
+.PHONY : src/config/config.o
 
 # target to build an object file
-src/error_handling.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/error_handling.cpp.o
-.PHONY : src/error_handling.cpp.o
+src/config/config.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config.cpp.o
+.PHONY : src/config/config.cpp.o
 
-src/error_handling.i: src/error_handling.cpp.i
-.PHONY : src/error_handling.i
-
-# target to preprocess a source file
-src/error_handling.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/error_handling.cpp.i
-.PHONY : src/error_handling.cpp.i
-
-src/error_handling.s: src/error_handling.cpp.s
-.PHONY : src/error_handling.s
-
-# target to generate assembly for a file
-src/error_handling.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/error_handling.cpp.s
-.PHONY : src/error_handling.cpp.s
-
-src/localization.o: src/localization.cpp.o
-.PHONY : src/localization.o
-
-# target to build an object file
-src/localization.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/localization.cpp.o
-.PHONY : src/localization.cpp.o
-
-src/localization.i: src/localization.cpp.i
-.PHONY : src/localization.i
+src/config/config.i: src/config/config.cpp.i
+.PHONY : src/config/config.i
 
 # target to preprocess a source file
-src/localization.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/localization.cpp.i
-.PHONY : src/localization.cpp.i
+src/config/config.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config.cpp.i
+.PHONY : src/config/config.cpp.i
 
-src/localization.s: src/localization.cpp.s
-.PHONY : src/localization.s
+src/config/config.s: src/config/config.cpp.s
+.PHONY : src/config/config.s
 
 # target to generate assembly for a file
-src/localization.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/localization.cpp.s
-.PHONY : src/localization.cpp.s
+src/config/config.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config.cpp.s
+.PHONY : src/config/config.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -347,6 +323,54 @@ src/ui_core/interface.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/ui_core/interface.cpp.s
 .PHONY : src/ui_core/interface.cpp.s
 
+src/util/error_handling.o: src/util/error_handling.cpp.o
+.PHONY : src/util/error_handling.o
+
+# target to build an object file
+src/util/error_handling.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/error_handling.cpp.o
+.PHONY : src/util/error_handling.cpp.o
+
+src/util/error_handling.i: src/util/error_handling.cpp.i
+.PHONY : src/util/error_handling.i
+
+# target to preprocess a source file
+src/util/error_handling.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/error_handling.cpp.i
+.PHONY : src/util/error_handling.cpp.i
+
+src/util/error_handling.s: src/util/error_handling.cpp.s
+.PHONY : src/util/error_handling.s
+
+# target to generate assembly for a file
+src/util/error_handling.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/error_handling.cpp.s
+.PHONY : src/util/error_handling.cpp.s
+
+src/util/localization.o: src/util/localization.cpp.o
+.PHONY : src/util/localization.o
+
+# target to build an object file
+src/util/localization.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/localization.cpp.o
+.PHONY : src/util/localization.cpp.o
+
+src/util/localization.i: src/util/localization.cpp.i
+.PHONY : src/util/localization.i
+
+# target to preprocess a source file
+src/util/localization.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/localization.cpp.i
+.PHONY : src/util/localization.cpp.i
+
+src/util/localization.s: src/util/localization.cpp.s
+.PHONY : src/util/localization.s
+
+# target to generate assembly for a file
+src/util/localization.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/util/localization.cpp.s
+.PHONY : src/util/localization.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -358,12 +382,9 @@ help:
 	@echo "... debug"
 	@echo "... release"
 	@echo "... nekomino"
-	@echo "... src/error_handling.o"
-	@echo "... src/error_handling.i"
-	@echo "... src/error_handling.s"
-	@echo "... src/localization.o"
-	@echo "... src/localization.i"
-	@echo "... src/localization.s"
+	@echo "... src/config/config.o"
+	@echo "... src/config/config.i"
+	@echo "... src/config/config.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -382,6 +403,12 @@ help:
 	@echo "... src/ui_core/interface.o"
 	@echo "... src/ui_core/interface.i"
 	@echo "... src/ui_core/interface.s"
+	@echo "... src/util/error_handling.o"
+	@echo "... src/util/error_handling.i"
+	@echo "... src/util/error_handling.s"
+	@echo "... src/util/localization.o"
+	@echo "... src/util/localization.i"
+	@echo "... src/util/localization.s"
 .PHONY : help
 
 

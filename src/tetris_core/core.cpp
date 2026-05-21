@@ -36,14 +36,14 @@ game::game() {
   };
   g.initialize();
 
-  keybinding[oLeft] = { sf::Keyboard::Key::Left };
-  keybinding[oRight] = { sf::Keyboard::Key::Right };
-  keybinding[oSD] = { sf::Keyboard::Key::Down };
-  keybinding[oHD] = { sf::Keyboard::Key::Space };
-  keybinding[oCW] = { sf::Keyboard::Key::X };
-  keybinding[oCCW] = { sf::Keyboard::Key::Z };
-  keybinding[o180] = { sf::Keyboard::Key::A };
-  keybinding[oHold] = { sf::Keyboard::Key::LShift, sf::Keyboard::Key::RShift };
+  keybinding[op_left] = { sf::Keyboard::Key::Left };
+  keybinding[op_right] = { sf::Keyboard::Key::Right };
+  keybinding[op_sd] = { sf::Keyboard::Key::Down };
+  keybinding[op_hd] = { sf::Keyboard::Key::Space };
+  keybinding[op_cw] = { sf::Keyboard::Key::X };
+  keybinding[op_ccw] = { sf::Keyboard::Key::Z };
+  keybinding[op_180] = { sf::Keyboard::Key::A };
+  keybinding[op_hold] = { sf::Keyboard::Key::LShift, sf::Keyboard::Key::RShift };
 }
 
 void game::get_key_down_stat() {
@@ -88,15 +88,15 @@ void game::tick(sf::Time dt) {
       lock_refresh = lock_refresh_max;
       rot_amount = 0; began_lock = false;
 
-      if ((ihs == ixs_hold && key_down[oHold]) || (ihs == ixs_tap && ihs_stash)) {
+      if ((ihs == ixs_hold && key_down[op_hold]) || (ihs == ixs_tap && ihs_stash)) {
         g.hold(); held = true;
       }
       if (irs == ixs_hold || irs == ixs_tap) {
         int kc = 0, k = 0;
         if (irs == ixs_hold) {
-          if (key_down[oCW]) ++kc, k = 1;
-          if (key_down[oCCW]) ++kc, k = -1;
-          if (key_down[o180]) ++kc, k = 2;
+          if (key_down[op_cw]) ++kc, k = 1;
+          if (key_down[op_ccw]) ++kc, k = -1;
+          if (key_down[op_180]) ++kc, k = 2;
         } else kc = 1, k = irs_stash;
         if (kc == 1) {
           if (k == 1) rotate_cw();
@@ -105,13 +105,13 @@ void game::tick(sf::Time dt) {
         }
       }
       if (ims == ixs_hold) {
-        if (key_pressed[oLMost] ^ key_pressed[oRMost]) {
-          if (key_pressed[oLMost]) { move_leftmost(); reset_opposite_das(-1); }
-          if (key_pressed[oRMost]) { move_rightmost(); reset_opposite_das(1); }
+        if (key_pressed[op_lmost] ^ key_pressed[op_rmost]) {
+          if (key_pressed[op_lmost]) { move_leftmost(); reset_opposite_das(-1); }
+          if (key_pressed[op_rmost]) { move_rightmost(); reset_opposite_das(1); }
         }
-        if (key_pressed[oLeft] ^ key_pressed[oRight]) {
-          if (key_pressed[oLeft]) { move_left(); change_dir(-1); }
-          if (key_pressed[oRight]) { move_right(); change_dir(1); }
+        if (key_pressed[op_left] ^ key_pressed[op_right]) {
+          if (key_pressed[op_left]) { move_left(); change_dir(-1); }
+          if (key_pressed[op_right]) { move_right(); change_dir(1); }
           charge_move = std::max(charge_move, arr);
         }
       }
@@ -142,9 +142,9 @@ void game::tick(sf::Time dt) {
 
   // sd
   {
-    if (key_pressed[oSD]) { has_mino g.soft_drop(); charge_sd_status = 1, charge_sd = sddas; }
-    if (key_pressed[oID]) { has_mino g.instant_drop(); }
-    if (charge_sd_status && !key_down[oSD]) charge_sd_status = 0, charge_sd = sf::Time::Zero;
+    if (key_pressed[op_sd]) { has_mino g.soft_drop(); charge_sd_status = 1, charge_sd = sddas; }
+    if (key_pressed[op_id]) { has_mino g.instant_drop(); }
+    if (charge_sd_status && !key_down[op_sd]) charge_sd_status = 0, charge_sd = sf::Time::Zero;
     if (charge_sd_status) {
       charge_sd -= dt;
       if (charge_sd <= sf::Time::Zero) {
@@ -179,16 +179,16 @@ void game::tick(sf::Time dt) {
 
   // move
   {
-    if (key_pressed[oLeft]) { has_mino move_left(); change_dir(-1); }
-    if (key_pressed[oRight]) { has_mino move_right(); change_dir(1); }
-    if (key_pressed[oLMost]) { has_mino move_leftmost(); reset_opposite_das(-1); }
-    if (key_pressed[oRMost]) { has_mino move_rightmost(); reset_opposite_das(1); }
-    if (charge_move_dir == -1 && !key_down[oLeft]) {
-      if (key_down[oRight]) change_dir(1);
+    if (key_pressed[op_left]) { has_mino move_left(); change_dir(-1); }
+    if (key_pressed[op_right]) { has_mino move_right(); change_dir(1); }
+    if (key_pressed[op_lmost]) { has_mino move_leftmost(); reset_opposite_das(-1); }
+    if (key_pressed[op_rmost]) { has_mino move_rightmost(); reset_opposite_das(1); }
+    if (charge_move_dir == -1 && !key_down[op_left]) {
+      if (key_down[op_right]) change_dir(1);
       else change_dir(0);
     }
-    if (charge_move_dir == 1 && !key_down[oRight]) {
-      if (key_down[oLeft]) change_dir(-1);
+    if (charge_move_dir == 1 && !key_down[op_right]) {
+      if (key_down[op_left]) change_dir(-1);
       else change_dir(0);
     }
     if (charge_move_dir) {
@@ -215,15 +215,15 @@ void game::tick(sf::Time dt) {
 
   // rotate
   {
-    if (key_pressed[oCW]) { has_mino rotate_cw(); stash(irs) irs_stash = 1; charge_move_dcd = dcd; }
-    if (key_pressed[oCCW]) { has_mino rotate_ccw(); stash(irs) irs_stash = -1; charge_move_dcd = dcd; }
-    if (key_pressed[o180]) { has_mino rotate_180(); stash(irs) irs_stash = 2; charge_move_dcd = dcd; }
+    if (key_pressed[op_cw]) { has_mino rotate_cw(); stash(irs) irs_stash = 1; charge_move_dcd = dcd; }
+    if (key_pressed[op_ccw]) { has_mino rotate_ccw(); stash(irs) irs_stash = -1; charge_move_dcd = dcd; }
+    if (key_pressed[op_180]) { has_mino rotate_180(); stash(irs) irs_stash = 2; charge_move_dcd = dcd; }
   }
 
   // hd, hold
   {
-    if (key_pressed[oHD]) { has_mino g.hard_drop(); charge_are += are, charge_move_dcd = dcd; }
-    if (key_pressed[oHold]) {
+    if (key_pressed[op_hd]) { has_mino g.hard_drop(); charge_are += are, charge_move_dcd = dcd; }
+    if (key_pressed[op_hold]) {
       has_mino {
         if (!held || infinite_hold) {
           g.hold(), held = true;
@@ -309,3 +309,4 @@ void game::print(std::ostream &s) {
   s << std::string(n, '&') << std::string(10 - n, ' ') << '|' << lock_refresh;
 }
 
+// todo: finesse judgement

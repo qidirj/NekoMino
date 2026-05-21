@@ -1,0 +1,16 @@
+display.window.width=320
+display.window.height=240
+
+system.lang=en
+
+*prefix=demo
+  .sizemult=0.5
+  *prefix=demo.game
+    .das=70
+    .arr=0
+    .dcd=17
+    .sddas=0
+    .sdarr=0
+    .gravity=-1
+  *prefix=demo
+*prefix=

@@ -4,9 +4,9 @@ _deps/*
 .vscode/*
 bin/*
 build/*
+logs/*
 CMakeFiles/*
 .makefile.old
 CMakeCache.txt
 *.log
 *.exe
-src/localization.md
