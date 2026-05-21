@@ -14,8 +14,8 @@
 
 #define GAME_VER_MAJOR 0
 #define GAME_VER_MINOR 0
-#define GAME_VER_PATCH 26052101
-#define GAME_VER_PATCH_FULL "20260521a 'config update but half done'"
+#define GAME_VER_PATCH 26052102
+#define GAME_VER_PATCH_FULL "20260521a_appendix 'config update but half done'"
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 #define GAME_VER_STRING "v" STR(GAME_VER_MAJOR) "." STR(GAME_VER_MINOR) "." GAME_VER_PATCH_FULL
