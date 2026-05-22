@@ -179,6 +179,78 @@ src/config/config.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config.cpp.s
 .PHONY : src/config/config.cpp.s
 
+src/config/config_defaults.o: src/config/config_defaults.cpp.o
+.PHONY : src/config/config_defaults.o
+
+# target to build an object file
+src/config/config_defaults.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_defaults.cpp.o
+.PHONY : src/config/config_defaults.cpp.o
+
+src/config/config_defaults.i: src/config/config_defaults.cpp.i
+.PHONY : src/config/config_defaults.i
+
+# target to preprocess a source file
+src/config/config_defaults.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_defaults.cpp.i
+.PHONY : src/config/config_defaults.cpp.i
+
+src/config/config_defaults.s: src/config/config_defaults.cpp.s
+.PHONY : src/config/config_defaults.s
+
+# target to generate assembly for a file
+src/config/config_defaults.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_defaults.cpp.s
+.PHONY : src/config/config_defaults.cpp.s
+
+src/config/config_io.o: src/config/config_io.cpp.o
+.PHONY : src/config/config_io.o
+
+# target to build an object file
+src/config/config_io.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_io.cpp.o
+.PHONY : src/config/config_io.cpp.o
+
+src/config/config_io.i: src/config/config_io.cpp.i
+.PHONY : src/config/config_io.i
+
+# target to preprocess a source file
+src/config/config_io.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_io.cpp.i
+.PHONY : src/config/config_io.cpp.i
+
+src/config/config_io.s: src/config/config_io.cpp.s
+.PHONY : src/config/config_io.s
+
+# target to generate assembly for a file
+src/config/config_io.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_io.cpp.s
+.PHONY : src/config/config_io.cpp.s
+
+src/config/config_validate.o: src/config/config_validate.cpp.o
+.PHONY : src/config/config_validate.o
+
+# target to build an object file
+src/config/config_validate.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_validate.cpp.o
+.PHONY : src/config/config_validate.cpp.o
+
+src/config/config_validate.i: src/config/config_validate.cpp.i
+.PHONY : src/config/config_validate.i
+
+# target to preprocess a source file
+src/config/config_validate.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_validate.cpp.i
+.PHONY : src/config/config_validate.cpp.i
+
+src/config/config_validate.s: src/config/config_validate.cpp.s
+.PHONY : src/config/config_validate.s
+
+# target to generate assembly for a file
+src/config/config_validate.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nekomino.dir/build.make CMakeFiles/nekomino.dir/src/config/config_validate.cpp.s
+.PHONY : src/config/config_validate.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -385,6 +457,15 @@ help:
 	@echo "... src/config/config.o"
 	@echo "... src/config/config.i"
 	@echo "... src/config/config.s"
+	@echo "... src/config/config_defaults.o"
+	@echo "... src/config/config_defaults.i"
+	@echo "... src/config/config_defaults.s"
+	@echo "... src/config/config_io.o"
+	@echo "... src/config/config_io.i"
+	@echo "... src/config/config_io.s"
+	@echo "... src/config/config_validate.o"
+	@echo "... src/config/config_validate.i"
+	@echo "... src/config/config_validate.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

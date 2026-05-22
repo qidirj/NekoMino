@@ -31,6 +31,9 @@ add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
 
 add_executable(nekomino
   src/main.cpp
+  src/config/config_defaults.cpp
+  src/config/config_io.cpp
+  src/config/config_validate.cpp
   src/config/config.cpp
   src/tetris_core/board.cpp
   src/tetris_core/core.cpp
