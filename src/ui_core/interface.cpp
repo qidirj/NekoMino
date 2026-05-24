@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "../util/error_handling.h"
 #include <sstream>
+#include <stdexcept>
 #include "interface.h"
 
 namespace ui {
@@ -35,6 +36,7 @@ bool pre_initialize_render_error(bool fatal, std::string error) {
       }
     }
   }
+  return true;
 }
 
 void initialize() {

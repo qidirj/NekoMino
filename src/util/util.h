@@ -1,6 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -62,6 +63,13 @@ inline bool is_float(const std::string &s) {
     }
   }
   return true;
+}
+
+inline std::string time_to_string(std::time_t t) {
+  std::tm tm; localtime_s(&tm, &t);
+  static char buf[64];
+  std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
+  return buf;
 }
 
 #endif

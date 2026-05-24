@@ -56,7 +56,7 @@ int main() {
       dt_b.push_back(dt.asSeconds());
       // std::clog << dt.asSeconds() << std::endl;
     } else dt_a.push_back(dt.asSeconds());
-    if (dt_a.size() == 200000) break;
+    // if (dt_a.size() == 200000) break;
     // if (dt_a.size() % 1000 == 0) std::clog << dt_a.size() << std::endl;
   }
   ui::window.close();

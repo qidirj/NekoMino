@@ -89,6 +89,7 @@ localization load_language_file(const string &filename) {
   }
   std::string line;
   while (std::getline(f, line)) {
+    inplace_trim(line);
     size_t sep_pos = line.find(' ');
     if (sep_pos != std::string::npos) {
       std::string key = line.substr(0, sep_pos);

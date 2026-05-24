@@ -305,7 +305,7 @@ int game::rotate_180() {
 
 void game::print(std::ostream &s) {
   g.print(s);
-  auto ldr = 1 - (charge_lock / lock_delay); int n = std::round(10 * ldr);
+  auto ldr = 1 - (charge_lock / lock_delay); int n = std::clamp(std::round(10 * ldr), 0.0f, 10.0f);
   s << std::string(n, '&') << std::string(10 - n, ' ') << '|' << lock_refresh;
 }
 

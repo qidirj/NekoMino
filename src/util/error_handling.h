@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include "../constants.h"
+#include "util.h"
 namespace logger {
   class logger {
     std::ofstream f; bool workwell = true, last = false;
@@ -24,12 +25,12 @@ namespace logger {
       std::ofstream &raw() { return f; }
       void setmask(int m) { mask = m & 0b11111; }
 
-      void fatal(const std::string &msg) { if ((last = (mask & 0b00001))) f << time(0) << " [FATAL] " << msg << std::endl; }
-      void error(const std::string &msg) { if ((last = (mask & 0b00010))) f << time(0) << " [ERROR] " << msg << std::endl; }
-      void warn (const std::string &msg) { if ((last = (mask & 0b00100))) f << time(0) << " [WARN]  " << msg << std::endl; }
-      void info (const std::string &msg) { if ((last = (mask & 0b01000))) f << time(0) << " [INFO]  " << msg << std::endl; }
-      void debug(const std::string &msg) { if ((last = (mask & 0b10000))) f << time(0) << " [DEBUG] " << msg << std::endl; }
-      void note (const std::string &msg) { if ( last                    ) f <<  "           [NOTE] " << msg << std::endl; }
+      void fatal(const std::string &msg) { if ((last = (mask & 0b00001))) f << time_to_string(std::time(0)) << " [FATAL] " << msg << std::endl; }
+      void error(const std::string &msg) { if ((last = (mask & 0b00010))) f << time_to_string(std::time(0)) << " [ERROR] " << msg << std::endl; }
+      void warn (const std::string &msg) { if ((last = (mask & 0b00100))) f << time_to_string(std::time(0)) << " [WARN]  " << msg << std::endl; }
+      void info (const std::string &msg) { if ((last = (mask & 0b01000))) f << time_to_string(std::time(0)) << " [INFO]  " << msg << std::endl; }
+      void debug(const std::string &msg) { if ((last = (mask & 0b10000))) f << time_to_string(std::time(0)) << " [DEBUG] " << msg << std::endl; }
+      void note (const std::string &msg) { if ( last                    ) f <<  "                    [NOTE]  " << msg << std::endl; }
 
       void debugv(int ver, const std::string &msg) { if (ver >= DEBUG_VER) debug(msg); }
   };
