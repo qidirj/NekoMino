@@ -38,3 +38,11 @@
 ### 0.0.20260522a 'config update but half done'
 
 拆分了配置部分不同功能的代码。完成了配置文件的写入功能。
+
+### 0.0.20260523a 'idk and chore'
+
+随便干了点不重要的东西。
+
+### 0.0.20260525a 'config update and almost done'
+
+完成了配置的设置、读取、删除。

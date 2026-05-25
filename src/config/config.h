@@ -8,6 +8,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include "../util/util.h"
 
 namespace config {
 
@@ -45,6 +46,7 @@ void load_ini_from_file(std::string filename, map_entry &var);
 namespace writer {
 extern int errors, warns;
 void reset_errors();
+template<class _Tp> bool write_node_as_string_to_stream(std::ostream &file, const _Tp &node);
 void write_ini_to_file(std::string filename, const map_entry &root);
 std::string write_ini_to_string(const map_entry &root);
 }
@@ -55,8 +57,11 @@ bool validate(std::string path, map_entry &node, constraint_t passdown);
 }
 
 int initialize();
-entry_t get(std::string key);
 
+entry_t getraw(std::string key);
+template<class _Tp, typename> _Tp get(std::string key);
+int set(std::string key, const entry_t &val); // only literal and list can be set
+bool erase(std::string key);
 }
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <string>
+#include <variant>
 #include <vector>
 
 inline std::string inplace_trim(std::string &s) {
@@ -66,10 +67,17 @@ inline bool is_float(const std::string &s) {
 }
 
 inline std::string time_to_string(std::time_t t) {
-  std::tm tm; localtime_s(&tm, &t);
+  std::tm tm = *localtime(&t);
   static char buf[64];
   std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
   return buf;
 }
+
+template<class _Tp, class _Variant>
+struct is_variant_member;
+
+template<class _Tp, class... Ts>
+struct is_variant_member<_Tp, std::variant<Ts...>>
+    : std::disjunction<std::is_same<_Tp, Ts>...> {};
 
 #endif

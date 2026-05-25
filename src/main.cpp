@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
+#include <variant>
 
 #include "config/config.h"
 #include "tetris_core/board.h"
@@ -21,8 +22,6 @@ void initialize() {
     else if (config_result == 4) ui::pre_initialize_render_error(false, std::to_string(config::user_validator::warns) + " warning generated when validating Config.\nPlease verify your '" + config::config_path + "', 'logs/config.log' may help.") ? std::exit(4) : void();
   }
 
-  std::clog << config::writer::write_ini_to_string(config::default_config) << std::endl;
-
   rs::load_from_file("res/rotation_system/srs.txt");
   // rs::print(std::cout, rs::rotation_systems["SRS"], false);
   // rs::print(std::cout, rs::rotation_systems["SRS"], true);
@@ -31,15 +30,55 @@ void initialize() {
   ui::initialize();
 }
 
+void demo_2() {
+  std::string op, w;
+  while (true) {
+    std::cin >> op;
+    if (op == "print") std::cout << config::writer::write_ini_to_string(config::default_config) << std::endl;
+    else if (op == "end") break;
+    else {
+      std::cin >> w;
+      if (op == "set") {
+        std::string tp, val;
+        std::cin >> tp >> val;
+        config::entry_t val1;
+        if (tp == "i") val1 = std::stoll(val);
+        else if (tp == "f") val1 = std::stod(val);
+        else if (tp == "b") val1 = (val == "true");
+        else if (tp == "s") val1 = val;
+        if (val1.valueless_by_exception()) std::cout << "Unknown Type" << std::endl;
+        else {
+          auto res = config::set(w, val1);
+          if (res == 1) std::cout << "Not found" << std::endl;
+          else if (res == 2) std::cout << "Cannot set map" << std::endl;
+          else if (res == 3) std::cout << "Incorrect value" << std::endl;
+          else std::cout << "Success" << std::endl;
+        }
+      } else if (op == "get") {
+        auto res = config::getraw(w);
+        if (res.valueless_by_exception()) std::cout << "Not found" << std::endl;
+        else config::writer::write_node_as_string_to_stream(std::cout, res);
+      } else if (op == "erase") {
+        auto res = config::erase(w);
+        if (res) std::cout << "Success" << std::endl;
+        else std::cout << "Failed" << std::endl;
+      }
+    }
+  }
+  std::exit(0);
+}
 
 std::vector<float> dt_a, dt_b;
 
 int main() {
   initialize();
 
+  demo_2();
+
   sf::Clock clock; clock.restart();
   sf::Time render_cd, render_rate = sf::seconds(1.0 / 60.0);
   game g;
+  int frame = 0;
   while (ui::window.isOpen()) {
     auto dt = clock.restart();
     while (const std::optional event = ui::window.pollEvent()) {
@@ -54,8 +93,12 @@ int main() {
       ui::render_temp(g);
       ui::window.display();
       dt_b.push_back(dt.asSeconds());
+      LOG(7) << "Render" << ++frame << std::endl;
       // std::clog << dt.asSeconds() << std::endl;
-    } else dt_a.push_back(dt.asSeconds());
+    } else {
+      dt_a.push_back(dt.asSeconds());
+      LOG(7) << "Logic " << ++frame << std::endl;;
+    }
     // if (dt_a.size() == 200000) break;
     // if (dt_a.size() % 1000 == 0) std::clog << dt_a.size() << std::endl;
   }

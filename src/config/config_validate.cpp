@@ -88,7 +88,7 @@ void validate(std::string path, const map_entry &node, constraint_t passdown);
 void validate(std::string path, const list_entry &node, constraint_t passdown) {
   LOG(5) << "validating list '" << path << "'" << std::endl;
   if (constraints.count(path)) logger::config.error("Assuming node '" + path + "' is a literal (by giving direct constraint), however it is a list."), ++errors;
-  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path + ".*");
+  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "#" : path + ".#");
   if (constraints.count(path.empty() ? "#" : path + ".#")) logger::config.error("Assuming node '" + path + "' is a map (by giving key constraint), however it is a list."), ++errors;
   for (const auto &son : node.a) {
     std::string son_path;
@@ -103,9 +103,9 @@ void validate(std::string path, const list_entry &node, constraint_t passdown) {
 void validate(std::string path, const map_entry &node, constraint_t passdown) {
   LOG(5) << "validating map '" << path << "'" << std::endl;
   if (constraints.count(path)) logger::config.error("Assuming node '" + path + "' is a literal (by giving direct constraint), however it is a map."), ++errors;
-  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path + ".*");
+  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "*" : path + ".*");
   constraint_t key = default_constraint_key;
-  if (constraints.count(path.empty() ? "#" : path + ".#")) key = constraints.at(path + ".#");
+  if (constraints.count(path.empty() ? "#" : path + ".#")) key = constraints.at(path.empty() ? "#" : path + ".#");
   if (!(key.first == "s" || is_legal_typename(key.first))) logger::config.error("Giving map node '" + path + "' 's key a non-string-or-enum type " + key.first + "."), ++errors;
   for (const auto &[ son_key, son ] : node.a) {
     std::string son_path;
@@ -150,7 +150,7 @@ bool validate(std::string path, _Tp &node, constraint_t passdown) {
 }
 bool validate(std::string path, map_entry &node, constraint_t passdown);
 bool validate(std::string path, list_entry &node, constraint_t passdown) {
-  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path + ".*");
+  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "*" : path + ".*");
   std::vector<std::size_t> remove_index;
   for (std::size_t i = 0; i < node.a.size(); ++i) {
     auto &son = node.a[i];
@@ -168,9 +168,9 @@ bool validate(std::string path, list_entry &node, constraint_t passdown) {
   return true;
 }
 bool validate(std::string path, map_entry &node, constraint_t passdown) {
-  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path + ".*");
+  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "*" : path + ".*");
   constraint_t key = default_constraint_key;
-  if (constraints.count(path.empty() ? "#" : path + ".#")) key = constraints.at(path + ".#");
+  if (constraints.count(path.empty() ? "#" : path + ".#")) key = constraints.at(path.empty() ? "#" : path + ".#");
   std::vector<std::string> remove_key;
   for (auto &[ son_key, son ] : node.a) {
     std::string son_path;
