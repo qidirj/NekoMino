@@ -1,0 +1,5 @@
+!language.name Chinese (Simplified)
+!language.name_local 简体中文
+!language.id zh_Hans
+about.game_title Neko Mino
+about.version Version [{#0}]

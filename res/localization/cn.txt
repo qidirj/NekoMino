@@ -1,6 +1,0 @@
-gameTitle Neko Mino
-frameFull 帧
-dasFull 自动移动延迟
-das ASD
-arrFull 自动移动周期
-arr ASP

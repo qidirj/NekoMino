@@ -23,7 +23,7 @@ const constraint_t default_constraint_key = always(s, true);
 const std::map<std::string, constraint_t> constraints = {
   { "display.window.width", ranged(i, 1, 8192) },
   { "display.window.height", ranged(i, 1, 8192) },
-  { "system.lang", length(1, 64) },
+  { "system.lang.*", length(1, 64) },
   { "demo.sizemult", ranged(f, 0.25, 4.0) },
   { "demo.game.*", ranged(i, 0, 10000) },
   { "demo.game.gravity", ranged(i, -1, 10000) },
@@ -33,7 +33,7 @@ const std::map<std::string, constraint_t> constraints = {
   { "demo.game.ims", { "IXSMode", header{ return std::get<std::string>(e) == "ixs_none" || std::get<std::string>(e) == "ixs_hold"; } } },
   { "demo.game.infinite_hold", always(b, true) },
   { "demo.game.lock_refresh", ranged(i, 0, 2147483647) },
-  { "demo.game.lock_refresh_hold", ranged(i, 0, 2147483647) },
+  { "demo.game.lock_refresh_on_hold", ranged(i, 0, 2147483647) },
   { "demo.game.keybinding.#", enum(Operation) },
   { "demo.game.keybinding.*", enum(Key) },
 };
@@ -64,7 +64,7 @@ std::enable_if_t<
   std::is_same_v<_Tp, std::string>
 >>
 void validate(std::string path, const _Tp &node, constraint_t passdown) {
-  LOG(5) << "validating literal '" << path << "'" << std::endl;
+  LOG(8) << "validating literal '" << path << "'" << std::endl;
   constraint_t cons = passdown;
   if (constraints.count(path)) cons = constraints.at(path);
   if (constraints.count(path.empty() ? "*" : path + ".*")) logger::config.error("Assuming node '" + path + "' is an iterable (by giving passdown constraint), however it is a literal."), ++errors;
@@ -84,11 +84,15 @@ void validate(std::string path, const _Tp &node, constraint_t passdown) {
     logger::config.error("Node '" + path + "'s constraint function failed to run because of wrong type assumption."), ++errors;
   }
 }
+void validate(std::string path, const std::monostate &node, constraint_t passdown) {
+  logger::config.error("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  ++errors;
+}
 void validate(std::string path, const map_entry &node, constraint_t passdown);
 void validate(std::string path, const list_entry &node, constraint_t passdown) {
-  LOG(5) << "validating list '" << path << "'" << std::endl;
+  LOG(8) << "validating list '" << path << "'" << std::endl;
   if (constraints.count(path)) logger::config.error("Assuming node '" + path + "' is a literal (by giving direct constraint), however it is a list."), ++errors;
-  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "#" : path + ".#");
+  if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "*" : path + ".*");
   if (constraints.count(path.empty() ? "#" : path + ".#")) logger::config.error("Assuming node '" + path + "' is a map (by giving key constraint), however it is a list."), ++errors;
   for (const auto &son : node.a) {
     std::string son_path;
@@ -101,7 +105,7 @@ void validate(std::string path, const list_entry &node, constraint_t passdown) {
   }
 }
 void validate(std::string path, const map_entry &node, constraint_t passdown) {
-  LOG(5) << "validating map '" << path << "'" << std::endl;
+  LOG(8) << "validating map '" << path << "'" << std::endl;
   if (constraints.count(path)) logger::config.error("Assuming node '" + path + "' is a literal (by giving direct constraint), however it is a map."), ++errors;
   if (constraints.count(path.empty() ? "*" : path + ".*")) passdown = constraints.at(path.empty() ? "*" : path + ".*");
   constraint_t key = default_constraint_key;
@@ -147,6 +151,11 @@ bool validate(std::string path, _Tp &node, constraint_t passdown) {
     return logger::config.warn("Node '" + path + "'s constraint function failed to run because of wrong type assumption."), ++warns, false;
   }
   return true;
+}
+bool validate(std::string path, std::monostate &node, constraint_t passdown) {
+  logger::config.warn("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  ++warns;
+  return false;
 }
 bool validate(std::string path, map_entry &node, constraint_t passdown);
 bool validate(std::string path, list_entry &node, constraint_t passdown) {

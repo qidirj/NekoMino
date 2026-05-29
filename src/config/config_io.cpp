@@ -24,7 +24,10 @@ void load_ini_from_file(std::string filename, map_entry &var) {
     buffer = trim(buffer);
     if (buffer.empty() || buffer[0] == ':') continue;
     std::size_t pos;
-    if ((pos = buffer.find('=')) == buffer.npos) logger::config.error("On config line " + std::to_string(line) + ": no value found (no '=')."), ++warns;
+    if ((pos = buffer.find('=')) == buffer.npos) {
+      logger::config.warn("On config line " + std::to_string(line) + ": no value found (no '=')."), ++warns;
+      continue;
+    }
     std::string key = buffer.substr(0, pos), value = buffer.substr(pos + 1);
     if (key.empty()) logger::config.warn("On config line " + std::to_string(line) + ": key is empty."), ++warns;
     if (key[0] == '*') {
@@ -146,6 +149,10 @@ void write_node_ini_to_stream(std::ostream &file, std::string path, std::string 
     }
   }
   file << '\n';
+}
+void write_node_ini_to_stream(std::ostream &file, std::string path, std::string name, int indent, const std::monostate &node) {
+  logger::config.error("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  ++errors;
 }
 void write_node_ini_to_stream(std::ostream &file, std::string path, std::string name, int indent, const map_entry &node) {
   for (const auto &[ son_key, son ] : node.a) {

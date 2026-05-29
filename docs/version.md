@@ -46,3 +46,11 @@
 ### 0.0.20260525a 'config update and almost done'
 
 完成了配置的设置、读取、删除。
+
+### 0.0.20260529a 'config and localization'
+
+引入了 `std::monostate` 以正确地判断配置存在性。
+
+正式使用配置调整游戏。修复了锁延机制的一个 bug。修复了 0 锁延会导致 RE 的 bug。
+
+翻新了本地化部分，现在将 `system.lang` 配置项改为列表，并按序检查使用的每个语言。

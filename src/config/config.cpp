@@ -1,6 +1,7 @@
 #include "config.h"
 #include "../constants.h"
 #include "../util/error_handling.h"
+#include <iostream>
 
 namespace config {
 map_entry config;

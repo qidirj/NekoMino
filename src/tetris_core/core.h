@@ -52,6 +52,8 @@ public:
 
   void tick(sf::Time dt);
 
+  void load_demo();
+
   void print(std::ostream &s);
 };
 

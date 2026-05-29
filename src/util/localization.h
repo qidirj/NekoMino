@@ -3,15 +3,23 @@
 
 #include <string>
 #include <map>
+#include <optional>
 #include <vector>
-using std::string, std::map, std::size_t;
-using localization = std::map<string, string>;
 
-extern std::map<string, localization> languages;
-extern localization *lang;
-string format(const string &key, const std::vector<string> &args, int recursion_depth = 0);
+namespace localization {
+using localization = std::map<std::string, std::string>;
 
-localization load_language_file(const string &filename);
-void export_language_file(const string &filename, const localization &lang);
+extern std::map<std::string, localization> languages;
+extern std::vector<localization*> lang;
+
+std::optional<std::string> find_in_lang(const std::string &key);
+std::string format(const std::string &key, const std::vector<std::string> &args = {}, int recursion_depth = 0);
+
+bool load_language_file(const std::string &filename);
+bool export_language_file(const std::string &filename, const localization &lang);
+
+int load_all_from_path(const std::string &path);
+bool set_language(); // based on config
+}
 
 #endif

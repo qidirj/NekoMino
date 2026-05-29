@@ -40,7 +40,8 @@ add_executable(nekomino
   src/tetris_core/core.cpp
   src/tetris_core/minoes.cpp
   src/tetris_core/rs.cpp
-  src/ui_core/interface.cpp
+  src/ui_core/controller.cpp
+  src/ui/interface.cpp
   src/util/error_handling.cpp
   src/util/localization.cpp)
 target_compile_features(nekomino PRIVATE cxx_std_17)

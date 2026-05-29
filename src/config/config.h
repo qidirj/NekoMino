@@ -17,7 +17,7 @@ extern const std::string config_path;
 struct list_entry;
 struct map_entry;
 // using enum_entry = std::pair<std::string, std::string>;
-using entry_t = std::variant<bool, long long, double, std::string, list_entry, map_entry>;
+using entry_t = std::variant<std::monostate, bool, long long, double, std::string, list_entry, map_entry>;
 using constraint_checker_t = std::function<bool (const entry_t &)>;
 using constraint_t = std::pair<std::string, constraint_checker_t>;
 extern const constraint_t default_constraint_passdown;
@@ -59,7 +59,7 @@ bool validate(std::string path, map_entry &node, constraint_t passdown);
 int initialize();
 
 entry_t getraw(std::string key);
-template<class _Tp, typename> _Tp get(std::string key);
+template<class _Tp, typename = std::enable_if_t<is_variant_member<_Tp, entry_t>::value>> _Tp get(std::string key);
 int set(std::string key, const entry_t &val); // only literal and list can be set
 bool erase(std::string key);
 }

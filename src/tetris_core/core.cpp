@@ -1,4 +1,5 @@
 #include "../constants.h"
+#include "../config/config.h"
 #include "core.h"
 #include <cmath>
 #include <cstdint>
@@ -35,15 +36,6 @@ game::game() {
     charge_are += are_on_clear * (std::int64_t)(line > 0) + are_per_line * (std::int64_t)(line);
   };
   g.initialize();
-
-  keybinding[op_left] = { sf::Keyboard::Key::Left };
-  keybinding[op_right] = { sf::Keyboard::Key::Right };
-  keybinding[op_sd] = { sf::Keyboard::Key::Down };
-  keybinding[op_hd] = { sf::Keyboard::Key::Space };
-  keybinding[op_cw] = { sf::Keyboard::Key::X };
-  keybinding[op_ccw] = { sf::Keyboard::Key::Z };
-  keybinding[op_180] = { sf::Keyboard::Key::A };
-  keybinding[op_hold] = { sf::Keyboard::Key::LShift, sf::Keyboard::Key::RShift };
 }
 
 void game::get_key_down_stat() {
@@ -285,28 +277,56 @@ int game::rotate_cw() {
   bool tg = g.touched_ground();
   int res = g.rotate_cw();
   if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
-  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  if (res != -1 && ((++rot_amount >= 5 && began_lock) || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
   return res;
 }
 int game::rotate_ccw() {
   bool tg = g.touched_ground();
   int res = g.rotate_ccw();
   if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
-  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  if (res != -1 && ((++rot_amount >= 5 && began_lock) || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
   return res;
 }
 int game::rotate_180() {
   bool tg = g.touched_ground();
   int res = g.rotate_180();
   if (res != -1 && lock_refresh > 0) charge_lock = sf::Time::Zero;
-  if (res != -1 && (++rot_amount >= 5 || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
+  if (res != -1 && ((++rot_amount >= 5 && began_lock) || tg)) lock_refresh = std::max(lock_refresh - 1, 0), began_lock = true;
   return res;
 }
 
 void game::print(std::ostream &s) {
   g.print(s);
-  auto ldr = 1 - (charge_lock / lock_delay); int n = std::clamp(std::round(10 * ldr), 0.0f, 10.0f);
+  auto ldr = 1 - (lock_delay == sf::Time::Zero ? 1.f : charge_lock / lock_delay); int n = std::clamp(std::round(10 * ldr), 0.0f, 10.0f);
   s << std::string(n, '&') << std::string(10 - n, ' ') << '|' << lock_refresh;
+}
+
+#define load_one_ms(x) x = sf::milliseconds(config::get<long long>("demo.game."#x))
+void game::load_demo() {
+  load_one_ms(das);
+  load_one_ms(arr);
+  load_one_ms(dcd);
+  load_one_ms(are);
+  load_one_ms(are_on_clear);
+  load_one_ms(are_per_line);
+  load_one_ms(sddas);
+  load_one_ms(sdarr);
+  load_one_ms(gravity);
+  load_one_ms(lock_delay);
+  irs = from_string<IXSMode>(config::get<std::string>("demo.game.irs"));
+  ihs = from_string<IXSMode>(config::get<std::string>("demo.game.ihs"));
+  ims = from_string<IXSMode>(config::get<std::string>("demo.game.ims"));
+  infinite_hold = config::get<bool>("demo.game.infinite_hold");
+  lock_refresh_max = config::get<long long>("demo.game.lock_refresh");
+  lock_refresh_on_hold = config::get<long long>("demo.game.lock_refresh_on_hold");
+
+  for (int i = 0; i < num_operations; ++i) {
+    auto key_list = config::get<config::list_entry>("demo.game.keybinding." + to_string<Operation>((Operation)i)).a;
+    for (auto k : key_list) {
+      auto ks = std::get<std::string>(k);
+      keybinding[i].push_back((sf::Keyboard::Key)from_string<Key>(ks));
+    }
+  }
 }
 
 // todo: finesse judgement

@@ -1,6 +1,7 @@
 #include "../util/error_handling.h"
 #include "../util/util.h"
 #include "config.h"
+#include <variant>
 
 namespace config {
 namespace getset_impl {
@@ -18,6 +19,10 @@ entry_t get(std::string path, const std::string &key, const std::vector<std::str
     return entry_t();
   }
   return node;
+}
+entry_t get(std::string path, const std::string &key, const std::vector<std::string> &keys, size_t idx, const std::monostate &node, bool def = false) {
+  logger::config.error("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  return entry_t();
 }
 entry_t get(std::string path, const std::string &key, const std::vector<std::string> &keys, size_t idx, const map_entry &node, bool def = false) {
   if (idx == keys.size()) return node;
@@ -60,6 +65,10 @@ bool validate(std::string path, const _Tp &node, constraint_t passdown) {
     return logger::config.error("When setting config: node '" + path + "'s constraint function failed to run because of wrong type assumption."), false;
   }
   return true;
+}
+bool validate(std::string path, const std::monostate &node, constraint_t passdown) {
+  logger::config.error("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  return false;
 }
 bool validate(std::string path, const map_entry &node, constraint_t passdown);
 bool validate(std::string path, const list_entry &node, constraint_t passdown) {
@@ -154,6 +163,10 @@ bool erase(std::string path, const std::string &key, const std::vector<std::stri
   logger::config.error("When removing config: key '" + key + "' does not exist because '" + path + "' is a non-map.");
   return false;
 }
+bool erase(std::string path, const std::string &key, const std::vector<std::string> &keys, size_t idx, std::monostate &node) {
+  logger::config.error("Node '" + path + "' is a monostate! You shouldn't be here!!!!!!!!!!!!");
+  return false;
+}
 bool erase(std::string path, const std::string &key, const std::vector<std::string> &keys, size_t idx, map_entry &node) {
   if (!node.a.count(keys[idx])) return logger::config.error("When removing config: key '" + keys[idx] + "' not found at '" + path + "' when trying to remove '" + key + "'."), false;
   std::string son_path;
@@ -170,10 +183,10 @@ bool erase(std::string path, const std::string &key, const std::vector<std::stri
 entry_t getraw(std::string key) {
   auto keys = split(key, ".");
   auto res = getset_impl::get("", key, keys, 0, config, false);
-  if (res.valueless_by_exception()) return getset_impl::get("", key, keys, 0, default_config, true);
+  if (std::holds_alternative<std::monostate>(res)) return getset_impl::get("", key, keys, 0, default_config, true);
   else return res;
 }
-template<class _Tp, typename = std::enable_if_t<is_variant_member<_Tp, entry_t>::value>>
+template<class _Tp, typename>
 _Tp get(std::string key) {
   auto res = getraw(key);
   if (std::holds_alternative<_Tp>(res)) return std::get<_Tp>(res);
@@ -189,4 +202,8 @@ bool erase(std::string key) {
   auto keys = split(key, ".");
   return getset_impl::erase("", key, keys, 0, config);
 }
+
+#define TYPES (bool)(long long)(double)(std::string)(list_entry)(map_entry)
+#define INSTANTIATE(r, data, type) template type get<type>(std::string);
+BOOST_PP_SEQ_FOR_EACH(INSTANTIATE, ~, TYPES)
 }

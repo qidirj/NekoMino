@@ -1,7 +1,7 @@
 display.window.width=320
 display.window.height=240
 
-system.lang=en
+system.lang=zh_Hans en
 
 *prefix=demo
   .sizemult=0.5
@@ -9,6 +9,8 @@ system.lang=en
     .das=70
     .arr=0
     .dcd=17
+    .are_on_clear=0
+    .are_per_line=0
     .sddas=0
     .sdarr=0
     .gravity=-1

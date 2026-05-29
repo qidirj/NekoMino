@@ -9,15 +9,15 @@ namespace config {
 const map_entry default_config = dict
   { "display", dict
     { "window", dict
-      { "width", 320 },
-      { "height", 240 },
+      { "width", 640 },
+      { "height", 480 },
     end }, 
   end },
   { "system", dict
-    { "lang", "en" },
+    { "lang", list "en" end },
   end },
   { "demo", dict
-    { "sizemult", 0.5 },
+    { "sizemult", 1.0 },
     { "game", dict
       { "das", 150 },
 #if DEBUG_VER == 5
@@ -26,8 +26,8 @@ const map_entry default_config = dict
       { "arr", 50 },
       { "dcd", 33 },
       { "are", 0 },
-      { "are_clear", 500 },
-      { "are_line", 250 },
+      { "are_on_clear", 500 },
+      { "are_per_line", 250 },
       { "sddas", 100 },
       { "sdarr", 100 },
       { "gravity", 1000 },
@@ -37,19 +37,22 @@ const map_entry default_config = dict
       { "ims", "ixs_hold" },
       { "infinite_hold", false },
       { "lock_refresh", 15 },
-      { "lock_refresh_hold", 15 },
+      { "lock_refresh_on_hold", 15 },
       { "keybinding", dict
-        { "op_left" , list { "key_Left" } end },
+        { "op_left" , list "key_Left" end },
 #if DEBUG_VER == 5
         { "break_it!" , list { "break_it!", 114514 } end },
 #endif
-        { "op_right", list { "key_Right" } end },
-        { "op_sd"   , list { "key_Down" } end },
-        { "op_hd"   , list { "key_Space" } end },
-        { "op_cw"   , list { "key_X" } end },
-        { "op_ccw"  , list { "key_Z" } end },
-        { "op_180"  , list { "key_A" } end },
-        { "op_hold" , list { "key_LShift", "key_RShift" } end },
+        { "op_right", list "key_Right" end },
+        { "op_sd"   , list "key_Down" end },
+        { "op_hd"   , list "key_Space" end },
+        { "op_cw"   , list "key_X" end },
+        { "op_ccw"  , list "key_Z" end },
+        { "op_180"  , list "key_A" end },
+        { "op_hold" , list "key_LShift", "key_RShift" end },
+        { "op_lmost", list end },
+        { "op_rmost", list end },
+        { "op_id"   , list end },
       end },
     end },
   end },
