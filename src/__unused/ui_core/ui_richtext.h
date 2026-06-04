@@ -82,15 +82,24 @@ struct StyledString {
   std::string content;
   Style style;
 
-  auto bounds() {
+  // auto bounds() {
+  //   sf::Text text(*style.font, to_sf(content));
+  //   text.setStyle(style.style);
+  //   text.setCharacterSize(style.font_size);
+  //   return text.getLocalBounds();
+  // }
+  // sf::Vector2f size() { return bounds().size; }
+  auto width() {
+    if (content.empty()) return 0.f;
     sf::Text text(*style.font, to_sf(content));
     text.setStyle(style.style);
     text.setCharacterSize(style.font_size);
-    return text.getLocalBounds();
+    const auto &gsg = text.getShapedGlyphs();
+    return gsg.back().position.x - gsg.front().position.x + gsg.back().glyph.advance;
   }
-  sf::Vector2f size() { return bounds().size; }
 };
 inline std::vector<StyledString> parse_bbcode(std::string input, const Style &default_style) {
+  // tmr0();
   std::vector<std::pair<std::string, Style>> stylestack = { { "root", default_style } };
   std::vector<StyledString> result;
   std::string current_content;
@@ -110,6 +119,11 @@ inline std::vector<StyledString> parse_bbcode(std::string input, const Style &de
       else if (tag == "i") style.style |= sf::Text::Italic;
       else if (tag == "u") style.style |= sf::Text::Underlined;
       else if (tag == "s") style.style |= sf::Text::StrikeThrough;
+      else if (tag == "flush") {
+        if (!current_content.empty()) result.push_back({ current_content, stylestack.back().second });
+        current_content.clear();
+        return true;
+      }
       else if (tag.substr(0, 6) == "color=") style.color = color::from_string(tag.substr(6)), tag = tag.substr(0, 5);
       else if (tag.substr(0, 5) == "size=") {
         auto sizetext = tag.substr(5);
@@ -131,6 +145,8 @@ inline std::vector<StyledString> parse_bbcode(std::string input, const Style &de
     }
   };
 
+  // tmr0.print("parse_bbcode initialize");
+
   std::size_t len = input.size();
   for (std::size_t i = 0; i < len; ++i) {
     auto ch = input[i];
@@ -140,6 +156,7 @@ inline std::vector<StyledString> parse_bbcode(std::string input, const Style &de
         auto tag = input.substr(i + 1, ed - i - 1);
         if (handle_tag(tag)) {
           i = ed;
+          // tmr0.print("parse_bbcode " + std::to_string(i));
           continue;
         }
       }
@@ -147,19 +164,19 @@ inline std::vector<StyledString> parse_bbcode(std::string input, const Style &de
     } else if (ch == '\\' && i + 1 < len) {
       current_content.push_back(input[i + 1]);
       ++i;
-    } else current_content.push_back(ch);
+    } else [[likely]] current_content.push_back(ch);
+    // tmr0.print("parse_bbcode " + std::to_string(i));
   }
   if (!current_content.empty()) result.push_back({ current_content, stylestack.back().second });
+  // tmr0.print("parse_bbcode finish");
   return result;
 }
 
-inline std::vector<StyledString> split_word(const std::vector<StyledString> &input) {
+inline std::vector<StyledString> split_word(const StyledString &input_seg) {
   std::vector<StyledString> result;
-  for (auto input_seg : input) {
-    boost::locale::boundary::ssegment_index map(boost::locale::boundary::boundary_type::line, input_seg.content.begin(), input_seg.content.end());
-    for (const auto &token : map) {
-      result.push_back({ token, input_seg.style });
-    }
+  boost::locale::boundary::ssegment_index map(boost::locale::boundary::boundary_type::line, input_seg.content.begin(), input_seg.content.end());
+  for (const auto &token : map) {
+    result.push_back({ token, input_seg.style });
   }
   return result;
 }
@@ -167,24 +184,33 @@ inline std::vector<StyledString> split_word(const std::vector<StyledString> &inp
 inline std::vector<std::vector<StyledString>> wrap_line(const std::vector<StyledString> &input, float max_width) {
   std::vector<std::vector<StyledString>> result;
   std::vector<StyledString> current_line; float current_width = 0;
-  for (auto input_seg : input) {
-    auto without_spc = input_seg; inplace_trim(without_spc.content);
-    float seg_width_min = without_spc.size().x, seg_width_max = input_seg.size().x;
-    if (current_width + seg_width_min > max_width) { // cannot put this seg
-      result.push_back(current_line), current_line.clear(); current_width = 0;
+  for (auto raw_input_seg : input) {
+    auto tokens = split(raw_input_seg.content, "\n");
+    bool is_not_first = false;
+    for (auto token : tokens) {
+      if (is_not_first) { // after a \n
+        if (current_line.empty()) current_line.push_back({ "", raw_input_seg.style });
+        result.push_back(current_line), current_line.clear(); current_width = 0;
+      }
+      is_not_first = true;
+      StyledString input_seg = { token, raw_input_seg.style };
+      float seg_width = input_seg.width();
+      if (current_width + seg_width > max_width) { // cannot put whole seg
+        auto words = split_word(input_seg);
+        for (auto word: words) {
+          float seg_width = word.width();
+          if (current_width + seg_width > max_width) {
+            result.push_back(current_line), current_line.clear(); current_width = 0;
+          }
+          current_line.push_back(word); current_width += seg_width;
+        }
+      } else {
+        current_line.push_back(input_seg); current_width += seg_width;
+      }
     }
-    int new_line_count = 0;
-    while (!input_seg.content.empty() && input_seg.content.back() == '\n') {
-      input_seg.content.pop_back(); ++new_line_count;
-    }
-    current_line.push_back(input_seg); current_width += seg_width_max;
-    while (new_line_count--) {
-      result.push_back(current_line), current_line.clear(); current_width = 0;
-      current_line.push_back({ "", input_seg.style });
-    }
-    #ifdef ERROR_HANDLING_H
-    if (seg_width_min > max_width) logger::interface.warn("fuck up why did someone put a such loooooooooong word here?");
-    #endif
+    // #ifdef ERROR_HANDLING_H
+    // if (seg_width > max_width) logger::interface.warn("fuck up why did someone put a such loooooooooong word here?");
+    // #endif
   }
   result.push_back(current_line);
   return result;
@@ -195,13 +221,16 @@ inline float render_line(sf::RenderTexture &rt, int y0, const std::vector<Styled
   float x0 = 0; unsigned max_sz = 0;
   for (auto seg : line) max_sz = std::max(max_sz, seg.style.font_size);
   for (auto seg : line) {
+    if (seg.content.empty()) continue;
     sf::Text text(*seg.style.font, to_sf(seg.content));
     text.setStyle(seg.style.style);
     text.setFillColor(seg.style.color);
     text.setCharacterSize(seg.style.font_size);
     text.setPosition({ x0, (float) std::round(y0 + (max_sz - seg.style.font_size)) });
     rt.draw(text);
-    x0 += text.getLocalBounds().size.x;
+    // x0 += text.getLocalBounds().size.x;
+    const auto &gsg = text.getShapedGlyphs();
+    x0 += gsg.back().position.x - gsg.front().position.x + gsg.back().glyph.advance;
   }
   return max_sz;
 }
@@ -213,9 +242,32 @@ inline void render_lines(sf::RenderTexture &rt, const std::vector<std::vector<St
   return;
 }
 
+inline sf::RenderTexture render_plain(std::string text, const Style &style, unsigned max_x, unsigned max_y) {
+  sf::RenderTexture rt({ max_x, max_y });
+  rt.clear(sf::Color::Transparent);
+  render_line(rt, 0, {{ text, style }});
+  rt.display();
+  return rt;
+}
+inline sf::RenderTexture render_singleline(std::string text, const Style &style, unsigned max_x, unsigned max_y) {
+  // tmr0();
+  sf::RenderTexture rt({ max_x, max_y });
+  rt.clear(sf::Color::Transparent);
+  // tmr0.print("init");
+  // auto parsed_bb = parse_bbcode(text, style);
+  // tmr0.print("parse");
+  render_line(rt, 0, parse_bbcode(text, style));
+  // render_line(rt, 0, parsed_bb);
+  // tmr0.print("render");
+  rt.display();
+  // tmr0.print("display");
+  return rt;
+}
 inline sf::RenderTexture render(std::string text, const Style &style, unsigned max_x, unsigned max_y, float linespace = 0, float dynamic_linespace = 0) {
   sf::RenderTexture rt({ max_x, max_y });
-  render_lines(rt, wrap_line(split_word(parse_bbcode(text, style)), max_x), linespace, dynamic_linespace);
+  rt.clear(sf::Color::Transparent);
+  // render_lines(rt, wrap_line(split_word(parse_bbcode(text, style)), max_x), linespace, dynamic_linespace);
+  render_lines(rt, wrap_line(parse_bbcode(text, style), max_x), linespace, dynamic_linespace);
   rt.display();
   return rt;
 }
@@ -224,3 +276,13 @@ inline sf::RenderTexture render(std::string text, const Style &style, unsigned m
 }
 
 #endif
+
+/*
+[b][/b]: bold
+[i][/i]: italic
+[u][/u]: underline
+[s][/s]: strikethrough
+[size=18/1.0x][/size]: size
+[color=0xffffff/#ffffff/red][/color]: color (text unimplemented (todo))
+[flush]: flush the segment. using at an appropriate frequency can optimize performance
+*/

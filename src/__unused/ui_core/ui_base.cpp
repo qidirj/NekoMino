@@ -66,4 +66,11 @@ namespace ui {
     result.display();
     return result;
   }
+
+  Container meta(640, 480);
+  
+  void tick(double dt, sf::Vector2f mouse) {
+
+  }
+
 }
