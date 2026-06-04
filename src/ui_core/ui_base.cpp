@@ -1,12 +1,14 @@
 /*
 ui > base
 
-implements: Object, Interactive, Container (todo)
+implements: Object, Interactive, Container
 */
 
 #include "ui.h"
 
 namespace ui {
+  sf::Font default_font;
+
   sf::RenderTexture Object::render() {
     sf::RenderTexture result({ w, h });
     result.clear(cbg);

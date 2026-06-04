@@ -9,10 +9,14 @@
 #define UI_H
 
 #include <SFML/Graphics.hpp>
+#include "ui_richtext.h"
 
 namespace ui {
 
 using ui_event = std::function<void ()>;
+
+extern sf::Font default_font;
+void initialize();
 
 class Object {
 public:
@@ -50,6 +54,13 @@ public:
 class Label : public Object {
 public:
   std::string text;
+  ui::richtext::Style style;
+  float linespace = 0, dynamic_linespace = 0.35;
+  Label() {}
+  Label(unsigned w, unsigned h, std::string text = "", ui::richtext::Style style = ui::richtext::Style{}) :
+    Object(w, h), text(text), style(style) {}
+  Label(unsigned w, unsigned h, float x, float y, std::string text = "", ui::richtext::Style style = ui::richtext::Style{}) :
+    Object(w, h, x, y), text(text), style(style) {}
   sf::RenderTexture render() override;
 };
 
