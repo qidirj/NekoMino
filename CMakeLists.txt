@@ -40,13 +40,35 @@ add_executable(nekomino
   src/tetris_core/core.cpp
   src/tetris_core/minoes.cpp
   src/tetris_core/rs.cpp
-  src/ui_core/controller.cpp
   src/ui/interface.cpp
   src/util/error_handling.cpp
-  src/util/localization.cpp)
+  src/util/localization.cpp
+  
+  src/ui_rmlui/RmlUi_Backend_SDL_GL3.cpp)
 target_compile_features(nekomino PRIVATE cxx_std_17)
-find_package(SFML 3.1 COMPONENTS Graphics REQUIRED)
-target_link_libraries(nekomino PRIVATE SFML::Graphics)
+# find_package(SFML 3.1 COMPONENTS Graphics REQUIRED)
+# target_link_libraries(nekomino PRIVATE SFML::Graphics)
+
+find_package(RmlUi REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3_image CONFIG REQUIRED)
+# set(RMLUI_BACKEND_PATH ${RmlUi_SOURCE_DIR}/Backends)
+set(RMLUI_BACKEND_PATH src/ui_rmlui)
+add_library(rmlui_backend_SDL_GL3 INTERFACE)
+target_sources(rmlui_backend_SDL_GL3 INTERFACE
+	${RMLUI_BACKEND_PATH}/RmlUi_Platform_SDL.cpp
+	${RMLUI_BACKEND_PATH}/RmlUi_Renderer_GL3.cpp
+)
+target_include_directories(rmlui_backend_SDL_GL3 INTERFACE ${RMLUI_BACKEND_PATH})
+target_compile_definitions(rmlui_backend_SDL_GL3 INTERFACE
+	RMLUI_SDL_VERSION_MAJOR=3
+)
+target_link_libraries(nekomino PRIVATE
+	RmlUi::RmlUi
+	SDL3::SDL3
+	SDL3_image::SDL3_image
+	rmlui_backend_SDL_GL3
+)
 
 # Allow `make debug` and `make release` after running `cmake .`
 add_custom_target(debug

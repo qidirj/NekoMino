@@ -3,7 +3,7 @@
 
 #include "util/enumerator.h"
 #include "tetris_core/minoes.h" // for enum Minoes
-#include <SFML/Window/Keyboard.hpp>
+// #include <SFML/Window/Keyboard.hpp>
 
 #define DEBUG_VER 9 // update when previous debug messages arent used anymore
 #ifdef DEBUG

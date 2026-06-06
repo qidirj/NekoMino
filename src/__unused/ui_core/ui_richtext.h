@@ -9,6 +9,7 @@ implements: Color, Richtext
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <array>
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>

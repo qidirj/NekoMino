@@ -176,7 +176,7 @@ void SampleApp::Run() {
 	}
 
 	// Play around with resource manager.
-	std::shared_ptr<sf::Font> my_font = std::make_shared<sf::Font>( "data/linden_hill.otf" );
+	std::shared_ptr<sf::Font> my_font = std::make_shared<sf::Font>( "font.otf" );
 	m_desktop.GetEngine().GetResourceManager().AddFont( "custom_font", my_font );
 
 	// Set properties.
@@ -184,7 +184,7 @@ void SampleApp::Run() {
 
 	// m_desktop.SetProperty( "Button#close:Normal", "Color", sf::Color::Yellow );
 	// #close is sufficient since there is only 1 widget with this id
-	// m_desktop.SetProperty( "#close", "FontName", "data/linden_hill.otf" );
+	// m_desktop.SetProperty( "#close", "FontName", "font.otf" );
 	// m_desktop.SetProperty( "#close", "FontSize", 15.f );
 
 	// We will batch the above properties into this call.
@@ -197,7 +197,7 @@ void SampleApp::Run() {
 		"	Color: #FFFF00FF;"
 		"}"
 		"#close {"
-		"	FontName: data/linden_hill.otf;"
+		"	FontName: font.otf;"
 		"	FontSize: 15;"
 		"}"
 	);
@@ -480,13 +480,14 @@ void SampleApp::Run() {
 	auto box = sfg::Box::Create( sfg::Box::Orientation::VERTICAL, 5.f );
 
 	auto lipsum = sfg::Label::Create(
-		"Nullam ut ante leo. Quisque consequat condimentum pulvinar. "
-		"Duis a enim sapien, ut vestibulum est. Vestibulum commodo, orci non gravida. "
-		"Aliquam sed pretium lacus. "
-		"Nullam placerat mauris vel nulla sagittis pellentesque. "
-		"Suspendisse in justo dui.\n"
-		"Ut dolor massa, gravida eu facilisis convallis, convallis sed odio.\n"
-		"Nunc placerat consequat vehicula."
+		L"Nullam ut ante leo. Quisque consequat condimentum pulvinar. "
+		L"Duis a enim sapien, ut vestibulum est. Vestibulum commodo, orci non gravida. "
+		L"Aliquam sed pretium lacus. "
+		L"Nullam placerat mauris vel nulla sagittis pellentesque. "
+		L"Suspendisse in justo dui.\n"
+		L"Ut dolor massa, gravida eu facilisis convallis, convallis sed odio.\n"
+		L"Nunc placerat consequat vehicula.\n"
+		L"以及一些中文测试，喵喵喵，喵喵喵，喵喵喵，喵喵喵，喵喵喵，喵喵喵，喵喵喵，喵喵喵，喵喵喵。"
 	);
 
 	lipsum->SetRequisition( sf::Vector2f( 400.f, 0.f ) );
